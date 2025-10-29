@@ -14,7 +14,7 @@ export default function SocialLogin() {
         </div>
         <div className="relative flex justify-center text-xs">
           <span className="bg-background px-2 text-muted-foreground">
-            Or login with
+            Or Sign up with
           </span>
         </div>
       </div>
