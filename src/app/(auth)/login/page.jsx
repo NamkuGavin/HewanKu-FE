@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ImageAssets } from "@/common/constant/assets";
-import { SizedBox, Padding, Text } from "@/components/shared/custom_widget";
+import { SizedBox, Text } from "@/components/shared/custom_widget";
 
 import SocialLogin from "./components/social_login";
 import FormLogin from "./components/form_login";

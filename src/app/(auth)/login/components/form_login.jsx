@@ -48,9 +48,12 @@ export default function FormLogin() {
           />
           <Label htmlFor="rememberMe">Remember Me</Label>
         </div>
-        <Text className="text-base font-[500] cursor-pointer" color={"#FF8D28"}>
+        <Link
+          href="/forgot_pass"
+          className="text-base font-[500] cursor-pointer text-[#FF8D28]"
+        >
           Forgot Password
-        </Text>
+        </Link>
       </div>
       <SizedBox height={30} />
       <Button
