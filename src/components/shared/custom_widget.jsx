@@ -156,7 +156,7 @@ export function Row({
   return (
     <div
       className={cn(
-        "flex flex-row",
+        "flex flex-row w-full",
         mainAxisMap[mainAxisAlignment],
         crossAxisMap[crossAxisAlignment],
         className
