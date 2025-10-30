@@ -7,16 +7,15 @@ import { IconAssets, ImageAssets } from "@/common/constant/assets";
 import { SizedBox, Text, Row } from "@/components/shared/custom_widget";
 import { FloatingInput } from "@/components/shared/floating_input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useNavigator } from "@/utils/helper";
 
-import SocialLogin from "@/app/(auth)/login/components/social_login";
-
-export default function ForgotpassPage() {
+export default function VerifycodePage() {
   const nav = useNavigator();
 
   const router = useRouter();
   const [formData, setFormData] = useState({
-    email: "",
+    otpCode: "",
   });
 
   const handleChange = (e) => {
@@ -46,38 +45,41 @@ export default function ForgotpassPage() {
           <Text className="text-sm font-[500]">Back to Login</Text>
         </button>
         <SizedBox height={30} />
-        <Text className="text-3xl font-[600]">Forgot your password?</Text>
+        <Text className="text-3xl font-[600]">Verify code</Text>
         <SizedBox height={15} />
         <Text className="text-base font-[400]">
-          Don’t worry, happens to all of us. Enter your email below to recover
-          your password
+          An authentication code has been sent to your email.
         </Text>
         <SizedBox height={50} />
         <FloatingInput
-          id="email"
-          name="email"
-          type="email"
-          label="Email"
-          value={formData.email}
+          id="otpCode"
+          name="otpCode"
+          label="Enter code"
+          value={formData.otpCode}
           onChange={handleChange}
           required
         />
+        <SizedBox height={15} />
+        <p className="text-start font-[500] text-sm">
+          Didn’t receive a code?{" "}
+          <Link href="" className="font-[500] hover:underline text-[#FF8D28]">
+            Resend
+          </Link>
+        </p>
         <SizedBox height={30} />
         <Button
-          onClick={() => nav.replace("/verify_code")}
+          onClick={() => nav.replace("/set_new_pass")}
           className="h-[45px] w-full bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm"
         >
-          Submit
+          Verify
         </Button>
-        <SizedBox height={50} />
-        <SocialLogin />
       </div>
 
       {/* Sisi Kanan */}
       <div className="flex justify-center items-center w-2/5 px-4">
         <Image
-          src={ImageAssets.forgotPassMockup}
-          alt="forgotPassMock"
+          src={ImageAssets.otpMockup}
+          alt="otpMock"
           width={475}
           height={0}
           className="rounded-2xl object-cover"
