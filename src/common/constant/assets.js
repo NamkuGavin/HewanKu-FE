@@ -3,6 +3,8 @@ export const ImageAssets = {
   loginMockup: "/images/login_mockup.png",
   registerMockup: "/images/register_mockup.png",
   forgotPassMockup: "/images/forgot_pass_mockup.png",
+  otpMockup: "/images/otp_mockup.png",
+  setPassMockup: "/images/setPass_mockup.png",
 };
 
 export const IconAssets = {
