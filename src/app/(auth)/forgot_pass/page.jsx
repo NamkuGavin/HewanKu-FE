@@ -78,7 +78,7 @@ export default function ForgotpassPage() {
         <Image
           src={ImageAssets.forgotPassMockup}
           alt="forgotPassMock"
-          width={475}
+          width={425}
           height={0}
           className="rounded-2xl object-cover"
         />

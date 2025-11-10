@@ -77,7 +77,7 @@ export default function SetnewpassPage() {
         <Image
           src={ImageAssets.setPassMockup}
           alt="setPassMock"
-          width={475}
+          width={425}
           height={0}
           className="rounded-2xl object-cover"
         />

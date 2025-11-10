@@ -36,7 +36,7 @@ export function FloatingInput({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         required={required}
-        className={`peer w-full px-4 py-3 text-base border-2 border-gray-300 rounded-sm focus:outline-none focus:border-[#FF8D28] transition-all ${
+        className={`peer w-full px-4 py-2 text-sm border-2 border-gray-300 rounded-sm focus:outline-none focus:border-[#FF8D28] transition-all ${
           isPassword ? "pr-12" : ""
         }`}
         placeholder=" "
@@ -46,8 +46,8 @@ export function FloatingInput({
         htmlFor={id}
         className={`absolute left-3 px-1 bg-white transition-all pointer-events-none ${
           isFloating
-            ? "-top-2.5 text-xs text-black"
-            : "top-3 text-base text-gray-500"
+            ? "-top-2.25 text-xs text-black"
+            : "top-2 text-sm text-gray-500"
         }`}
       >
         {label}

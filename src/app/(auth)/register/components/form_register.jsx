@@ -48,7 +48,7 @@ export default function FormRegister() {
           />
         </div>
       </Row>
-      <SizedBox height={20} />
+      <SizedBox height={15} />
       <Row>
         <div className="flex-1">
           <FloatingInput
@@ -72,7 +72,7 @@ export default function FormRegister() {
           />
         </div>
       </Row>
-      <SizedBox height={20} />
+      <SizedBox height={15} />
       <FloatingInput
         id="password"
         name="password"
@@ -82,7 +82,7 @@ export default function FormRegister() {
         onChange={handleChange}
         required
       />
-      <SizedBox height={20} />
+      <SizedBox height={15} />
       <FloatingInput
         id="confirmPass"
         name="confirmPass"
@@ -92,7 +92,7 @@ export default function FormRegister() {
         onChange={handleChange}
         required
       />
-      <SizedBox height={20} />
+      <SizedBox height={15} />
       <div className="flex items-center gap-3">
         <Checkbox
           id="agreeTerms"
@@ -122,7 +122,7 @@ export default function FormRegister() {
       >
         Create account
       </Button>
-      <SizedBox height={20} />
+      <SizedBox height={12} />
       <p className="text-center font-[500] text-sm">
         Already have an account?{" "}
         <Link

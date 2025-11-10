@@ -16,15 +16,15 @@ export default function LoginPage() {
           <Image
             src={ImageAssets.logoApp}
             alt="Logo"
-            width={175}
-            height={175}
+            width={150}
+            height={150}
           />
         </div>
 
         <SizedBox height={50} />
-        <Text className="text-3xl font-[600]">Login</Text>
+        <Text className="text-3xl font-semibold">Login</Text>
         <SizedBox height={15} />
-        <Text className="text-base font-[400]">
+        <Text className="text-base font-normal">
           Login to access your travelwise account
         </Text>
         <SizedBox height={30} />
@@ -38,7 +38,7 @@ export default function LoginPage() {
         <Image
           src={ImageAssets.loginMockup}
           alt="loginMock"
-          width={475}
+          width={425}
           height={0}
           className="rounded-2xl object-cover"
         />
