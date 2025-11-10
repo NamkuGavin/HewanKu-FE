@@ -80,7 +80,7 @@ export default function VerifycodePage() {
         <Image
           src={ImageAssets.otpMockup}
           alt="otpMock"
-          width={475}
+          width={425}
           height={0}
           className="rounded-2xl object-cover"
         />

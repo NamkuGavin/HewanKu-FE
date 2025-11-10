@@ -5,6 +5,12 @@ export const ImageAssets = {
   forgotPassMockup: "/images/forgot_pass_mockup.png",
   otpMockup: "/images/otp_mockup.png",
   setPassMockup: "/images/setPass_mockup.png",
+  backgroundHeader: "/images/background_header.png",
+  backgroundFooter: "/images/background_footer.png",
+  qrisLogo: "/images/qris.png",
+  mandiriLogo: "/images/mandiri.png",
+  gopayLogo: "/images/gopay.png",
+  danaLogo: "/images/dana.png",
 };
 
 export const IconAssets = {
@@ -12,4 +18,8 @@ export const IconAssets = {
   facebookIcon: "/icons/facebook_icon.svg",
   googleIcon: "/icons/google_icon.svg",
   back: "/icons/back.svg",
+  facebookBlackIcon: "/icons/facebook.svg",
+  instagramIcon: "/icons/instagram.svg",
+  twitterIcon: "/icons/twitter.svg",
+  youtubeIcon: "/icons/youtube.svg",
 };

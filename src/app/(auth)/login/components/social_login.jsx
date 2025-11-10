@@ -21,7 +21,7 @@ export default function SocialLogin() {
       <SizedBox height={30} />
       <Row mainAxisAlignment="between">
         <Button
-          className="w-[225px] h-[70px] border border-[#515DEF] hover:bg-stone-50 cursor-pointer rounded-sm"
+          className="w-[200px] h-[70px] border border-[#515DEF] hover:bg-stone-50 cursor-pointer rounded-sm"
           variant="outline"
         >
           <Image
@@ -32,7 +32,7 @@ export default function SocialLogin() {
           />
         </Button>
         <Button
-          className="w-[225px] h-[70px] border border-[#515DEF] hover:bg-stone-50 cursor-pointer rounded-sm"
+          className="w-[200px] h-[70px] border border-[#515DEF] hover:bg-stone-50 cursor-pointer rounded-sm"
           variant="outline"
         >
           <Image
@@ -43,7 +43,7 @@ export default function SocialLogin() {
           />
         </Button>
         <Button
-          className="w-[225px] h-[70px] border border-[#515DEF] hover:bg-stone-50 cursor-pointer rounded-sm"
+          className="w-[200px] h-[70px] border border-[#515DEF] hover:bg-stone-50 cursor-pointer rounded-sm"
           variant="outline"
         >
           <Image

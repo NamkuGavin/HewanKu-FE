@@ -7,8 +7,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useNavigator } from "@/utils/helper";
 
 export default function FormLogin() {
+  const nav = useNavigator();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -18,8 +21,13 @@ export default function FormLogin() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    nav.pushAndRemoveUntil("/home");
+  };
+
   return (
-    <div>
+    <form onSubmit={handleLogin}>
       <FloatingInput
         id="email"
         name="email"
@@ -72,6 +80,6 @@ export default function FormLogin() {
           Sign up
         </Link>
       </p>
-    </div>
+    </form>
   );
 }
