@@ -11,6 +11,21 @@ export const ImageAssets = {
   mandiriLogo: "/images/mandiri.png",
   gopayLogo: "/images/gopay.png",
   danaLogo: "/images/dana.png",
+  cat: "/images/cat.png",
+  cat1: "/images/cat1.png",
+  dog: "/images/dog.png",
+  dog1: "/images/dog1.png",
+  dog2: "/images/dog2.png",
+  dog3: "/images/dog3.png",
+  landak: "/images/landak.jpg",
+  ikanMas: "/images/ikan_mas.png",
+  kelinci: "/images/kelinci.png",
+  ular: "/images/ular.jpeg",
+  iguana: "/images/iguana.jpeg",
+  hamster: "/images/hamster.jpeg",
+  burung: "/images/burung.jpeg",
+  burung1: "/images/burung1.png",
+  kuraKura: "/images/kura_kura.jpeg",
 };
 
 export const IconAssets = {
