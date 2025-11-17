@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import {
   Text,
   Column,
@@ -11,6 +14,8 @@ import Image from "next/image";
 import { ImageAssets } from "@/common/constant/assets";
 
 export default function FounderSection() {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <Row
       mainAxisAlignment="center"
@@ -33,27 +38,41 @@ export default function FounderSection() {
           Founder
         </Text>
         <SizedBox height={30} />
-        <ReadMoreText
-          maxLines={3}
-          className="font-semibold text-left text-stone-500 italic"
-          textSize={15}
-        >
-          Nisl nunc vitae integer ridiculus ultrices quam a scelerisque est.
-          Sollicitudin volutpat blandit maecenas ornare dictum tempor. Amet sem
-          non rutrum et duis. Id nisi ac vitae enim neque sapien.
-          <br />
-          <br />
-          Eu arcu consectetur etiam bibendum fermentum sed lobortis fringilla
-          imperdiet. Aliquet ultrices risus dolor gravida. Faucibus sodales
-          semper a magnis sapien viverra purus sed tortor. Amet risus blandit
-          nunc odio rutrum. <br />
-          <br />
-          Adipiscing tincidunt imperdiet at cursus ipsum vulputate pharetra.
-          Tellus nulla commodo ut ut auctor orci blandit at elit. Turpis
-          pulvinar sagittis tristique aliquam vitae ipsum dui. Amet tempor
-          posuere mi amet vel lobortis bibendum. Commodo purus tincidunt cursus
-          tellus massa vel viverra.
-        </ReadMoreText>
+        <div className="w-full">
+          <Text
+            size={15}
+            className={
+              expanded
+                ? `font-semibold text-left text-stone-500 italic line-clamp-none`
+                : `line-clamp-4 font-semibold text-left text-stone-500 italic`
+            }
+          >
+            Nisl nunc vitae integer ridiculus ultrices quam a scelerisque est.
+            Sollicitudin volutpat blandit maecenas ornare dictum tempor. Amet
+            sem non rutrum et duis. Id nisi ac vitae enim neque sapien.
+            <br />
+            <br />
+            Eu arcu consectetur etiam bibendum fermentum sed lobortis fringilla
+            imperdiet. Aliquet ultrices risus dolor gravida. Faucibus sodales
+            semper a magnis sapien viverra purus sed tortor. Amet risus blandit
+            nunc odio rutrum. <br />
+            <br />
+            Adipiscing tincidunt imperdiet at cursus ipsum vulputate pharetra.
+            Tellus nulla commodo ut ut auctor orci blandit at elit. Turpis
+            pulvinar sagittis tristique aliquam vitae ipsum dui. Amet tempor
+            posuere mi amet vel lobortis bibendum. Commodo purus tincidunt
+            cursus tellus massa vel viverra.
+          </Text>
+
+          <Row mainAxisAlignment="start" className="mt-1">
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-[#FF8D28] text-xs font-medium hover:underline cursor-pointer"
+            >
+              {expanded ? "See less" : "See more"}
+            </button>
+          </Row>
+        </div>
         <SizedBox height={20} />
         <Image
           src={ImageAssets.ttdZuhri}
