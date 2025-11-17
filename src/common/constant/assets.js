@@ -26,6 +26,11 @@ export const ImageAssets = {
   burung: "/images/burung.jpeg",
   burung1: "/images/burung1.png",
   kuraKura: "/images/kura_kura.jpeg",
+  zuhriBlur: "/images/zuhri_blur.png",
+  ttdZuhri: "/images/ttd_zuhri.png",
+  gavinBlur: "/images/gavin_blur.png",
+  aliBlur: "/images/ali_blur.png",
+  rakaBlur: "/images/raka_blur.png",
 };
 
 export const IconAssets = {

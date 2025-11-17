@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export function Padding({
@@ -204,6 +207,35 @@ export function Column({
       {...props}
     >
       {children}
+    </div>
+  );
+}
+
+export function ReadMoreText({
+  children,
+  maxLines = 4,
+  className = "",
+  textSize, // opsional: override font size
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="w-full">
+      <Text
+        size={textSize}
+        className={expanded ? className : `line-clamp-${maxLines} ${className}`}
+      >
+        {children}
+      </Text>
+
+      <Row mainAxisAlignment="start" className="mt-1">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-[#FF8D28] text-xs font-medium hover:underline cursor-pointer"
+        >
+          {expanded ? "See less" : "See more"}
+        </button>
+      </Row>
     </div>
   );
 }

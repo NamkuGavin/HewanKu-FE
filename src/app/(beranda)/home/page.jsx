@@ -22,7 +22,7 @@ export default function HomePage() {
           <Column
             mainAxisAlignment="center"
             crossAxisAlignment="center"
-            className="py-12"
+            className="pt-8 pb-25"
           >
             <HewanUnggulan />
             <SizedBox height={50} />
