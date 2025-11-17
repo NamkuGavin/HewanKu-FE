@@ -42,4 +42,8 @@ export const IconAssets = {
   instagramIcon: "/icons/instagram.svg",
   twitterIcon: "/icons/twitter.svg",
   youtubeIcon: "/icons/youtube.svg",
+  clockIcon: "/icons/clock.svg",
+  mailIcon: "/icons/mail.svg",
+  mapPinIcon: "/icons/map-pin.svg",
+  phoneIcon: "/icons/phone.svg",
 };

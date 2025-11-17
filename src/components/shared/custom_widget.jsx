@@ -215,7 +215,7 @@ export function ReadMoreText({
   children,
   maxLines = 4,
   className = "",
-  textSize, // opsional: override font size
+  textSize,
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -223,7 +223,11 @@ export function ReadMoreText({
     <div className="w-full">
       <Text
         size={textSize}
-        className={expanded ? className : `line-clamp-${maxLines} ${className}`}
+        className={
+          expanded
+            ? `${className} !line-clamp-none`
+            : `line-clamp-${maxLines} ${className}`
+        }
       >
         {children}
       </Text>
