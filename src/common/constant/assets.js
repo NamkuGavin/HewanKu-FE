@@ -46,4 +46,12 @@ export const IconAssets = {
   mailIcon: "/icons/mail.svg",
   mapPinIcon: "/icons/map-pin.svg",
   phoneIcon: "/icons/phone.svg",
+  profileIcon: "/icons/profile.svg",
+  profileActiveIcon: "/icons/profile_active.svg",
+  signOutIcon: "/icons/sign_out.svg",
+  signOutActiveIcon: "/icons/sign_out_active.svg",
+  storeIcon: "/icons/store.svg",
+  storeActiveIcon: "/icons/store_active.svg",
+  mappinIcon: "/icons/map_pin.svg",
+  mappinActiveActiveIcon: "/icons/map_pin_active.svg",
 };

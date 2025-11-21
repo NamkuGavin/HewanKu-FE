@@ -11,11 +11,16 @@ import { Row, Container } from "@/components/shared/custom_widget";
 export default function HeaderBeranda() {
   const pathname = usePathname();
 
-  const menuItems = [
+  const leftItems = [
     { name: "Home", label: "Home", href: "/home" },
     { name: "Adopsi", label: "Adopsi", href: "/adopsi" },
     { name: "About Us", label: "About Us", href: "/about_us" },
     { name: "Contact Us", label: "Contact Us", href: "/contact_us" },
+  ];
+
+  const rightItems = [
+    { name: "Favorite", label: "Favorite", href: "/favorite" },
+    { name: "Profile", label: "Profile", href: "/profile" },
   ];
 
   const isActive = (href) => pathname === href;
@@ -44,7 +49,7 @@ export default function HeaderBeranda() {
           crossAxisAlignment="center"
           className="w-auto gap-8"
         >
-          {menuItems.map((item) => (
+          {leftItems.map((item) => (
             <Link key={item.name} href={item.href}>
               <button
                 className={cn(
@@ -79,12 +84,25 @@ export default function HeaderBeranda() {
               <Search size={15} />
             </button>
           </div>
-          <button className="relative p-2 hover:bg-gray-100 rounded-full cursor-pointer">
-            <Heart className="w-5 h-5 text-gray-700" />
-          </button>
-          <button className="p-2 hover:bg-gray-100 rounded-full cursor-pointer">
-            <User className="w-5 h-5 text-gray-700" />
-          </button>
+          {rightItems.map((item) => (
+            <Link key={item.name} href={item.href}>
+              <button className="p-2 hover:bg-gray-100 rounded-full cursor-pointer">
+                {item.name === "Favorite" ? (
+                  <Heart
+                    className={`w-5 h-5 ${
+                      isActive(item.href) ? "text-orange-500" : "text-gray-700"
+                    }`}
+                  />
+                ) : (
+                  <User
+                    className={`w-5 h-5 ${
+                      isActive(item.href) ? "text-orange-500" : "text-gray-700"
+                    }`}
+                  />
+                )}
+              </button>
+            </Link>
+          ))}
         </Row>
       </Row>
     </Container>
