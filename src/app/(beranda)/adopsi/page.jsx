@@ -3,8 +3,11 @@ import {
   Column,
   Container,
   Padding,
+  Row,
+  SizedBox,
 } from "@/components/shared/custom_widget";
 import HeroSectionBeranda from "@/components/shared/hero_section_beranda";
+import AdopsiByKategori from "./components/adopsi_by_kategori";
 
 export default function AdopsiPage() {
   return (
@@ -12,19 +15,15 @@ export default function AdopsiPage() {
       <HeroSectionBeranda showButton={false} />
 
       {/* Content Section */}
-      <Container bg="bg-white" className="pt-32 pb-16" px={8}>
+      <Container bg="bg-white" className="pt-16 pb-16">
         <Container className="max-w-6xl mx-auto">
           <Column
-            mainAxisAlignment="center"
-            crossAxisAlignment="center"
+            mainAxisAlignment="start"
+            crossAxisAlignment="start"
             className="min-h-96"
           >
-            <Text size={32} weight="600" className="mb-4">
-              Halaman Adopsi
-            </Text>
-            <Text className="text-gray-600 text-center">
-              Temukan hewan peliharaan yang sempurna untuk keluarga Anda
-            </Text>
+            <AdopsiByKategori />
+            <SizedBox height={50} />
           </Column>
         </Container>
       </Container>
