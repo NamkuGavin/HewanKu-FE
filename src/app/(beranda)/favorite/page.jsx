@@ -3,27 +3,25 @@ import {
   Column,
   Container,
   Padding,
-  Row,
-  SizedBox,
 } from "@/components/shared/custom_widget";
 import HeroSectionBeranda from "@/components/shared/hero_section_beranda";
-import AdopsiByKategori from "./components/adopsi_by_kategori";
 
-export default function AdopsiPage() {
+export default function FavoritePage() {
   return (
     <>
-      <HeroSectionBeranda showButton={false} />
+      <HeroSectionBeranda showButton={true} />
 
       {/* Content Section */}
-      <Container bg="bg-white" className="pt-16 pb-16">
+      <Container bg="bg-white" className="pt-32 pb-16" px={8}>
         <Container className="max-w-6xl mx-auto">
           <Column
-            mainAxisAlignment="start"
-            crossAxisAlignment="start"
+            mainAxisAlignment="center"
+            crossAxisAlignment="center"
             className="min-h-96"
           >
-            <AdopsiByKategori />
-            <SizedBox height={50} />
+            <Text size={32} weight="600" className="mb-4">
+              Halaman Favorite
+            </Text>
           </Column>
         </Container>
       </Container>

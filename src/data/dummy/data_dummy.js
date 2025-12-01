@@ -1,7 +1,10 @@
 import { Animal } from "@/data/models/dummy/animal_model";
-import { AnimalCategory } from "@/data/models/dummy/animal_category_model";
+import {
+  AnimalCategory,
+  AnimalAdopsiCategory,
+} from "@/data/models/dummy/animal_category_model";
 import { AnimalNewsBlog } from "@/data/models/dummy/animal_news_blog";
-import { ImageAssets } from "@/common/constant/assets";
+import { IconAssets, ImageAssets } from "@/common/constant/assets";
 
 export const dummyHewanUnggulan = [
   new Animal({
@@ -99,5 +102,62 @@ export const dummyNewsBlog = [
     title: "Burung termahal dan antik di tahun 2024",
     created_at: "24 May,2024",
     image: ImageAssets.burung1,
+  }),
+];
+
+export const dummyKategoriHewanAdopsi = [
+  new AnimalAdopsiCategory({
+    id: 1,
+    name: "Kucing",
+    activeIcon: IconAssets.categoryCatActive,
+    icon: IconAssets.categoryCat,
+  }),
+  new AnimalAdopsiCategory({
+    id: 2,
+    name: "Hamster",
+    activeIcon: IconAssets.categoryHasmterActive,
+    icon: IconAssets.categoryHamster,
+  }),
+  new AnimalAdopsiCategory({
+    id: 3,
+    name: "Anjing",
+    activeIcon: IconAssets.categoryDogActive,
+    icon: IconAssets.categoryDog,
+  }),
+  new AnimalAdopsiCategory({
+    id: 4,
+    name: "Burung",
+    activeIcon: IconAssets.categoryBirdActive,
+    icon: IconAssets.categoryBird,
+  }),
+  new AnimalAdopsiCategory({
+    id: 5,
+    name: "Kelinci",
+    activeIcon: IconAssets.categoryRabbitActive,
+    icon: IconAssets.categoryRabbit,
+  }),
+  new AnimalAdopsiCategory({
+    id: 6,
+    name: "Kura-kura",
+    activeIcon: IconAssets.categoryTurtleActive,
+    icon: IconAssets.categoryTurtle,
+  }),
+  new AnimalAdopsiCategory({
+    id: 7,
+    name: "Ikan",
+    activeIcon: IconAssets.categoryFishActive,
+    icon: IconAssets.categoryFish,
+  }),
+  new AnimalAdopsiCategory({
+    id: 8,
+    name: "Ular",
+    activeIcon: IconAssets.categorySnakeActive,
+    icon: IconAssets.categorySnake,
+  }),
+  new AnimalAdopsiCategory({
+    id: 9,
+    name: "Iguana",
+    activeIcon: IconAssets.categoryIguanaActive,
+    icon: IconAssets.categoryIguana,
   }),
 ];
