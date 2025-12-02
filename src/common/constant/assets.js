@@ -31,6 +31,7 @@ export const ImageAssets = {
   gavinBlur: "/images/gavin_blur.png",
   aliBlur: "/images/ali_blur.png",
   rakaBlur: "/images/raka_blur.png",
+  placeholderAnimal: "/images/placeholder_animal.png",
 };
 
 export const IconAssets = {

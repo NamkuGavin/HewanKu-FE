@@ -15,7 +15,8 @@ import Image from "next/image";
 
 export default function AdopsiByKategori() {
   const [startIndex, setStartIndex] = useState(0);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(1);
+
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
   const itemsPerPage = 6;
   const totalItems = dummyKategoriHewanAdopsi.length;
@@ -31,7 +32,13 @@ export default function AdopsiByKategori() {
   };
 
   const handleCategoryClick = (id) => {
-    setSelectedCategoryId(id);
+    setSelectedCategoryIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((itemId) => itemId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
   };
 
   const isPrevDisabled = startIndex === 0;
@@ -77,7 +84,7 @@ export default function AdopsiByKategori() {
       <SizedBox height={30} />
       <div className="grid grid-cols-6 gap-3 w-full">
         {visibleCategories.map((category) => {
-          const isActive = selectedCategoryId === category.id;
+          const isActive = selectedCategoryIds.includes(category.id);
 
           return (
             <div

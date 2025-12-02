@@ -11,19 +11,19 @@ export const dummyHewanUnggulan = [
     id: 1,
     name: "Golden Retriever",
     price: 2000000,
-    image: ImageAssets.dog,
+    image: ImageAssets.placeholderAnimal,
   }),
   new Animal({
     id: 2,
     name: "Kucing Anggora",
     price: 1000000,
-    image: ImageAssets.cat,
+    image: ImageAssets.placeholderAnimal,
   }),
   new Animal({
     id: 3,
     name: "Landak Tajam",
     price: 3000000,
-    image: ImageAssets.landak,
+    image: ImageAssets.placeholderAnimal,
   }),
 ];
 
@@ -89,19 +89,19 @@ export const dummyNewsBlog = [
     id: 1,
     title: "Anjing Polisi Terkenal Bernama Ali",
     created_at: "24 May,2024",
-    image: ImageAssets.dog2,
+    image: ImageAssets.placeholderAnimal,
   }),
   new AnimalNewsBlog({
     id: 2,
     title: "Shiba Inu menjadi icon coin di crypto yang bernama doge coin",
     created_at: "24 May,2024",
-    image: ImageAssets.dog3,
+    image: ImageAssets.placeholderAnimal,
   }),
   new AnimalNewsBlog({
     id: 3,
     title: "Burung termahal dan antik di tahun 2024",
     created_at: "24 May,2024",
-    image: ImageAssets.burung1,
+    image: ImageAssets.placeholderAnimal,
   }),
 ];
 
@@ -159,5 +159,161 @@ export const dummyKategoriHewanAdopsi = [
     name: "Iguana",
     activeIcon: IconAssets.categoryIguanaActive,
     icon: IconAssets.categoryIguana,
+  }),
+];
+
+export const dummyHewan = [
+  new Animal({
+    id: 1,
+    name: "Golden Retriever",
+    price: 2000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 2,
+    name: "Kucing Anggora",
+    price: 1000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 3,
+    name: "Landak Mini",
+    price: 3000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 4,
+    name: "Sugar Glider",
+    price: 750000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 5,
+    name: "Bearded Dragon",
+    price: 2500000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 6,
+    name: "Kelinci Holland Lop",
+    price: 800000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 7,
+    name: "Burung Lovebird",
+    price: 500000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 8,
+    name: "Hamster Syrian",
+    price: 150000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 9,
+    name: "Ikan Cupang Halfmoon",
+    price: 120000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 10,
+    name: "Tokek Leopard Gecko",
+    price: 1800000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 11,
+    name: "Kura-Kura Sulcata",
+    price: 3500000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 12,
+    name: "Burung Kenari",
+    price: 400000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 13,
+    name: "Anjing Pomeranian",
+    price: 5000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 14,
+    name: "Kucing Persia",
+    price: 1800000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 15,
+    name: "Chinchilla",
+    price: 2500000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 16,
+    name: "Ikan Koi Kohaku",
+    price: 750000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 17,
+    name: "Sugar Glider Mosaic",
+    price: 1500000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 18,
+    name: "Burung Kakatua",
+    price: 8000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 19,
+    name: "Musang Rase",
+    price: 1300000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 20,
+    name: "Ular Corn Snake",
+    price: 2000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+];
+
+export const dummyPopularHewan = [
+  new Animal({
+    id: 1,
+    name: "Golden Retriever",
+    price: 2000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 2,
+    name: "Kucing Anggora",
+    price: 1000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 3,
+    name: "Landak Mini",
+    price: 3000000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 4,
+    name: "Sugar Glider",
+    price: 750000,
+    image: ImageAssets.placeholderAnimal,
+  }),
+  new Animal({
+    id: 5,
+    name: "Bearded Dragon",
+    price: 2500000,
+    image: ImageAssets.placeholderAnimal,
   }),
 ];

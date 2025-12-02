@@ -33,3 +33,12 @@ export function useNavigator() {
     },
   };
 }
+
+export const formatRupiah = (number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0, // Menghilangkan desimal ,00
+    maximumFractionDigits: 0,
+  }).format(number);
+};
