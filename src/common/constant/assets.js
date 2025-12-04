@@ -73,4 +73,5 @@ export const IconAssets = {
   categorySnake: "/icons/category_snake.svg",
   categoryTurtleActive: "/icons/category_turtle_active.svg",
   categoryTurtle: "/icons/category_turtle.svg",
+  waOrangeIcon: "/icons/wa_orange_icon.svg",
 };

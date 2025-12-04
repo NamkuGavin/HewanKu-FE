@@ -5,6 +5,7 @@ import { dummyHewan } from "@/data/dummy/data_dummy";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   Text,
   Column,
@@ -46,42 +47,54 @@ export default function ListAdopsiAnimal() {
       </div>
       <div className="w-full grid grid-cols-3 gap-8">
         {currentPosts.map((animal, index) => (
-          <div
+          <Link
+            href={`/adopsi/detail_animal/${animal.id}`} // Sesuaikan path detail kamu
             key={animal.id}
-            className="rounded-lg overflow-hidden shadow-md border border-gray-100 bg-white cursor-pointer hover:shadow-lg transition-shadow duration-200"
+            className="block" // Pastikan link bersifat block agar layout grid tidak rusak
           >
-            <Image
-              src={animal.image}
-              alt={animal.name}
-              width={999999}
-              height={0}
-              className="w-full h-60 object-cover rounded-md"
-            />
-            <Padding vertical={12} horizontal={12}>
-              <Row mainAxisAlignment="between">
-                <Text size={15} className="font-semibold">
-                  {animal.name}
+            <div
+              // Key dipindah ke Link wrapper di atas
+              className="rounded-lg overflow-hidden shadow-md border border-gray-100 bg-white cursor-pointer hover:shadow-lg transition-shadow duration-200 h-full"
+            >
+              <Image
+                src={animal.image}
+                alt={animal.name}
+                width={999999}
+                height={0}
+                className="w-full h-60 object-cover rounded-md"
+              />
+              <Padding vertical={12} horizontal={12}>
+                <Row mainAxisAlignment="between">
+                  <Text size={15} className="font-semibold">
+                    {animal.name}
+                  </Text>
+
+                  {/* BUTTON LOVE */}
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault(); // Mencegah pindah halaman saat klik love
+                      e.stopPropagation(); // Mencegah event bubbling
+                      toggleFavorite(index);
+                    }}
+                    className="bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-200 cursor-pointer z-10 relative" // Tambah z-index biar aman
+                    aria-label="favorite"
+                  >
+                    <Heart
+                      size={15}
+                      className={`transition-all ${
+                        favorites[index]
+                          ? "fill-[#FF8D28] text-[#FF8D28]"
+                          : "text-[#FF8D28]"
+                      }`}
+                    />
+                  </Button>
+                </Row>
+                <Text size={12} className="font-semibold">
+                  Rp{animal.price.toLocaleString("id-ID")}
                 </Text>
-                <Button
-                  onClick={() => toggleFavorite(index)}
-                  className="bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-200 cursor-pointer"
-                  aria-label="favorite"
-                >
-                  <Heart
-                    size={15}
-                    className={`transition-all ${
-                      favorites[index]
-                        ? "fill-[#FF8D28] text-[#FF8D28]"
-                        : "text-[#FF8D28]"
-                    }`}
-                  />
-                </Button>
-              </Row>
-              <Text size={12} className="font-semibold">
-                Rp{animal.price.toLocaleString("id-ID")}
-              </Text>
-            </Padding>
-          </div>
+              </Padding>
+            </div>
+          </Link>
         ))}
       </div>
       <SizedBox height={30} />
