@@ -84,7 +84,7 @@ export default function AnimalInfo() {
         variant="outline"
       >
         <Text className="font-bold text-[#FA8232] text-base">
-          Beli sekarang
+          Adopsi sekarang
         </Text>
       </Button>
       <Row mainAxisAlignment="between" className="w-full my-4">
