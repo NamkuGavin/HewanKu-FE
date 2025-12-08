@@ -67,7 +67,7 @@ export default function AnimalInfo() {
       <SizedBox height={15} />
       <Row className="gap-2">
         <Text className="font-semibold text-[#2DA5F3] text-lg">
-          {formatRupiah(2000000)}
+          {formatRupiah(2000000 - (2000000 * discount) / 100)}
         </Text>
         {discount != 0 && (
           <Text className="font-semibold text-[#77878F] text-base line-through">
