@@ -30,7 +30,7 @@ export default function DetailAnimal({ params }) {
         >
           <Row className="w-full gap-8" mainAxisAlignment="center">
             <AnimalImageSlider />
-            <AnimalInfo />
+            <AnimalInfo animalId={animalId} />
           </Row>
         </Column>
       </Container>

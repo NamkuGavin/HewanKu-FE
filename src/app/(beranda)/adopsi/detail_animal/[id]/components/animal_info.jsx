@@ -17,7 +17,7 @@ import {
 import Image from "next/image";
 import { formatRupiah, useNavigator } from "@/utils/helper";
 
-export default function AnimalInfo() {
+export default function AnimalInfo({ animalId }) {
   const nav = useNavigator();
 
   const [rating, setRating] = useState(4.7);
@@ -82,7 +82,9 @@ export default function AnimalInfo() {
       </Row>
       <Separator className="my-5" />
       <Button
-      onClick={() => nav.push("/adopsi/forum_informasi")}
+        onClick={() =>
+          nav.push(`/adopsi/detail_animal/${animalId}/forum_informasi`)
+        }
         className="h-[48px] w-[200px] border-2 border-[#FA8232] bg-white hover:bg-orange-50 cursor-pointer rounded-sm"
         variant="outline"
       >
