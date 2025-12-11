@@ -2,42 +2,34 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import HeroSectionBeranda from "@/components/shared/hero_section_beranda";
-import {
-  Text,
-  Column,
-  Container,
-  Padding,
-  Row,
-  SizedBox,
-} from "@/components/shared/custom_widget";
+import { Container } from "@/components/shared/custom_widget";
 import { useNavigator } from "@/utils/helper";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export default function ForumPengalaman() {
   const nav = useNavigator();
   const { id: animalId } = useParams();
 
+  // STATE UNTUK SINGLE CHOICE SETIAP PERTANYAAN
+  const [pernahPelihara, setPernahPelihara] = useState(""); // iya / tidak
+  const [hewanLain, setHewanLain] = useState(""); // iya / tidak
+  const [alergi, setAlergi] = useState(""); // iya / tidak
+  const [aman, setAman] = useState(""); // iya / tidak
+
   return (
     <>
       <HeroSectionBeranda showButton={false} />
-      {/* Content Section */}
+
       <Container bg="bg-white" className="py-16 px-50">
         <div className="w-full bg-white rounded-2xl p-10 border-2 border-[#E0E8FF]">
+          
           {/* HEADER */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">
-              B. Pengalaman & Kondisi Lingkungan
-            </h2>
+            <h2 className="text-xl font-bold">B. Pengalaman & Kondisi Lingkungan</h2>
             <button
               type="button"
               className="text-xl font-bold cursor-pointer"
@@ -48,189 +40,141 @@ export default function ForumPengalaman() {
           </div>
 
           {/* FORM */}
-          <form className="space-y-5">
-            {/* Nama */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="mb-2 block">Nama Depan </Label>
-                <Input
-                  placeholder="Muhammad Gavin"
-                  className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
-                />
-              </div>
-              <div>
-                <Label className="mb-2 block">Nama Belakang</Label>
-                <Input
-                  placeholder="Arasyl"
-                  className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
-                />
+          <form className="space-y-10">
+
+            {/* 1. Pernah memelihara hewan? */}
+            <div>
+              <p className="font-medium mb-3">
+                Apakah Anda pernah memelihara hewan sebelumnya?
+              </p>
+
+              <div className="grid grid-cols-2 gap-10 pl-2">
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={pernahPelihara === "iya"}
+                    onCheckedChange={() => setPernahPelihara("iya")}
+                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  />
+                  <Label>Iya</Label>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={pernahPelihara === "tidak"}
+                    onCheckedChange={() => setPernahPelihara("tidak")}
+                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  />
+                  <Label>Tidak</Label>
+                </label>
+
               </div>
             </div>
 
-            {/* Email & Telepon */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="mb-2 block">Email</Label>
-                <Input
-                  type="email"
-                  placeholder="gavinganteng@gmail.com"
-                  className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
-                />
-              </div>
-              <div>
-                <Label className="mb-2 block">Nomor Telephone</Label>
-                <Input
-                  type="tel"
-                  placeholder="+6282170677488"
-                  className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
-                />
-              </div>
-            </div>
+            {/* 2. Jika Ya → Hewan & Lama */}
+            <div>
+              <p className="font-medium mb-3">
+                Jika ya, hewan apa yang pernah Anda pelihara dan berapa lama?
+              </p>
 
-            {/* Tanggal Lahir & Gender */}
-            <div className="w-full grid grid-cols-2 gap-4">
-              <div>
-                <Label className="mb-2 block">Tanggal Lahir</Label>
-                <Input
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <Label className="mb-2 block">Hewan dan Ras</Label>
+                  <Input className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500" />
+                </div>
+
+                <div>
+                  <Label className="mb-2 block">Hari, Bulan, Tahun</Label>
+                  <Input
                   type="date"
                   className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
                 />
-              </div>
-              <div>
-                <Label className="mb-2 block">Jenis Kelamin</Label>
-                <Select>
-                  <SelectTrigger className="w-full focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500 data-[state=open]:border-orange-500 data-[state=open]:ring-orange-500/20">
-                    <SelectValue placeholder="Pilih" />
-                  </SelectTrigger>
-                  <SelectContent className="w-full">
-                    <SelectItem value="pria">Pria</SelectItem>
-                    <SelectItem value="wanita">Wanita</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Daerah, Jalan, Zip */}
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label className="mb-2 block">Daerah</Label>
-                <Select>
-                  <SelectTrigger className="w-full focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500 data-[state=open]:border-orange-500 data-[state=open]:ring-orange-500/20">
-                    <SelectValue placeholder="Bandung" />
-                  </SelectTrigger>
-                  <SelectContent className="w-full">
-                    <SelectItem value="bandung">Bandung</SelectItem>
-                    <SelectItem value="jakarta">Jakarta</SelectItem>
-                    <SelectItem value="surabaya">Surabaya</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="mb-2 block">Jalan</Label>
-                <Select>
-                  <SelectTrigger className="w-full focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500 data-[state=open]:border-orange-500 data-[state=open]:ring-orange-500/20">
-                    <SelectValue placeholder="Telekomunikasi" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="telekomunikasi">
-                      Telekomunikasi
-                    </SelectItem>
-                    <SelectItem value="dipatiukur">Dipatiukur</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="mb-2 block">Zip Code</Label>
-                <Input
-                  placeholder="13456"
-                  className="bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
-                />
-              </div>
-            </div>
-
-            {/* Pekerjaan */}
-            <div className="mt-10">
-              <Label className="block mb-6 text-center font-semibold">
-                Pekerjaan / Status
-              </Label>
-
-              <div className="grid grid-cols-4 mt-4 flex justify-center gap-14 items-center">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="karyawan"
-                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                  />
-                  <Label htmlFor="karyawan">Karyawan</Label>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="pelajar"
-                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                  />
-                  <Label htmlFor="pelajar">Pelajar</Label>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="pengangguran"
-                    defaultChecked
-                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                  />
-                  <Label htmlFor="pengangguran">Pengangguran</Label>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="lainnya"
-                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                  />
-                  <Label htmlFor="lainnya">Lainnya</Label>
                 </div>
               </div>
             </div>
 
-            {/* Tempat Tinggal */}
-            <div className="mt-8">
-              <Label className="block mb-6 text-center font-semibold">
-                Tempat Tinggal
-              </Label>
+            {/* 3. Punya hewan lain? */}
+            <div>
+              <p className="font-medium mb-3">
+                Saat ini apakah Anda memiliki hewan peliharaan lain?
+              </p>
 
-              <div className="grid grid-cols-4 mt-4 flex justify-center gap-14 items-center">
-                <div className="flex items-center gap-3">
+              <div className="grid grid-cols-2 gap-10 pl-2">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
-                    id="kos"
+                    checked={hewanLain === "iya"}
+                    onCheckedChange={() => setHewanLain("iya")}
                     className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                   />
-                  <Label htmlFor="kos">Kos</Label>
-                </div>
+                  <Label>Iya</Label>
+                </label>
 
-                <div className="flex items-center gap-3">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
-                    id="rumah"
+                    checked={hewanLain === "tidak"}
+                    onCheckedChange={() => setHewanLain("tidak")}
                     className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                   />
-                  <Label htmlFor="rumah">Rumah</Label>
-                </div>
+                  <Label>Tidak</Label>
+                </label>
+              </div>
+            </div>
 
-                <div className="flex items-center gap-3">
+            {/* 4. Keluarga alergi? */}
+            <div>
+              <p className="font-medium mb-3">
+                Apakah ada anggota keluarga atau teman serumah yang alergi terhadap hewan?
+              </p>
+
+              <div className="grid grid-cols-2 gap-10 pl-2">
+
+                <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
-                    id="kontrakan"
-                    defaultChecked
+                    checked={alergi === "iya"}
+                    onCheckedChange={() => setAlergi("iya")}
                     className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                   />
-                  <Label htmlFor="kontrakan">Kontrakan</Label>
-                </div>
+                  <Label>Iya</Label>
+                </label>
 
-                <div className="flex items-center gap-3">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
-                    id="tempat-lainnya"
+                    checked={alergi === "tidak"}
+                    onCheckedChange={() => setAlergi("tidak")}
                     className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                   />
-                  <Label htmlFor="tempat-lainnya">Lainnya</Label>
-                </div>
+                  <Label>Tidak</Label>
+                </label>
+
+              </div>
+            </div>
+
+            {/* 5. Lingkungan aman? */}
+            <div>
+              <p className="font-medium mb-3">
+                Apakah lingkungan tempat tinggal Anda aman untuk hewan?
+              </p>
+
+              <div className="grid grid-cols-2 gap-10 pl-2">
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={aman === "iya"}
+                    onCheckedChange={() => setAman("iya")}
+                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  />
+                  <Label>Iya</Label>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={aman === "tidak"}
+                    onCheckedChange={() => setAman("tidak")}
+                    className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                  />
+                  <Label>Tidak</Label>
+                </label>
+
               </div>
             </div>
 
@@ -244,6 +188,7 @@ export default function ForumPengalaman() {
               >
                 Kembali
               </Button>
+
               <Button
                 type="submit"
                 className="rounded-full px-20 bg-orange-500 hover:bg-orange-600 cursor-pointer"
@@ -251,6 +196,7 @@ export default function ForumPengalaman() {
                 Kirim Form
               </Button>
             </div>
+
           </form>
         </div>
       </Container>
