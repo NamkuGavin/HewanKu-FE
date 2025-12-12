@@ -91,7 +91,7 @@ export default function AkunSayaPage() {
                 <Label htmlFor="username">Negara/Daerah</Label>
                 <Select defaultValue="indonesia">
                   <SelectTrigger className="w-full bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500">
-                    <SelectValue placeholder="Select a fruit" />
+                    <SelectValue placeholder="Pilih Negara/Daerah" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -110,7 +110,7 @@ export default function AkunSayaPage() {
                   <Label htmlFor="username">Jalan</Label>
                   <Select defaultValue="telekomunikasi">
                     <SelectTrigger className="w-full bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500">
-                      <SelectValue placeholder="Select a fruit" />
+                      <SelectValue placeholder="Pilih Jalan" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>

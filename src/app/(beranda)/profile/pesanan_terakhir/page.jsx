@@ -1,48 +1,39 @@
 "use client";
 
+import * as React from "react";
 import { Text } from "@/components/shared/custom_widget";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { dummyOrderAdopsi } from "@/data/dummy/data_dummy";
+import { formatRupiah } from "@/utils/helper";
 
-// CONTOH DATA SAAT DITAMPILKAN SAJA
 export default function PesananTerakhirPage() {
   const router = useRouter();
 
-  const data = [
-    {
-      orderId: "#51746385",
-      status: "BERHASIL",
-      date: "Dec 30, 2025 07:52",
-      total: "Rp2.000.000",
-    },
-    {
-      orderId: "#51746385",
-      status: "GAGAL",
-      date: "Dec 4, 2025 21:42",
-      total: "Rp2.000.000",
-    },
-    {
-      orderId: "#673971743",
-      status: "BERHASIL",
-      date: "Feb 2, 2025 19:28",
-      total: "Rp1.000.000",
-    },
-    {
-      orderId: "#673971743",
-      status: "BERHASIL",
-      date: "Mar 20, 2025 23:14",
-      total: "Rp1.500.000",
-    },
-  ];
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [postPerPage, setPostPerPage] = React.useState(6);
+  const endIndex = currentPage * postPerPage;
+  const startIndex = endIndex - postPerPage;
+  const paginate = (page) => setCurrentPage(page);
+
+  const totalPosts = dummyOrderAdopsi.length;
+  const totalPages = Math.ceil(totalPosts / postPerPage);
+  const currentPosts = dummyOrderAdopsi.slice(startIndex, endIndex);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-lg p-8">
+    <div className="w-full bg-white border border-gray-200 rounded-lg py-5">
       {/* Header */}
-      <Text size={18} weight="600" className="mb-6">
+      <Text size={18} weight="600" className="mb-6 px-5">
         PESANAN TERAKHIR
       </Text>
 
       {/* Table */}
-      <div className="w-full overflow-hidden rounded-md border border-gray-200">
+      <div className="w-full overflow-hidden border border-gray-200">
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-gray-100 text-gray-600 text-sm">
@@ -55,13 +46,15 @@ export default function PesananTerakhirPage() {
           </thead>
 
           <tbody>
-            {data.map((item, i) => (
+            {currentPosts.map((item, i) => (
               <tr key={i} className="border-b">
-                <td className="py-3 px-4">{item.orderId}</td>
+                <td className="py-3 px-4 font-medium text-xs">
+                  {item.orderId}
+                </td>
 
                 {/* STATUS warna dinamis */}
                 <td
-                  className={`py-3 px-4 font-semibold ${
+                  className={`py-3 px-4 font-semibold text-xs ${
                     item.status === "BERHASIL"
                       ? "text-green-600"
                       : "text-red-600"
@@ -70,15 +63,21 @@ export default function PesananTerakhirPage() {
                   {item.status}
                 </td>
 
-                <td className="py-3 px-4">{item.date}</td>
-                <td className="py-3 px-4">{item.total}</td>
+                <td className="py-3 px-4 text-xs">{item.dateTimeText}</td>
+                <td className="py-3 px-4 text-xs">
+                  {formatRupiah(item.total)}
+                </td>
 
                 {/* Action */}
-                <td className="py-3 px-4">
-                  <button 
-                    onClick={() => router.push("/(beranda)/profile/pesanan_terakhir/detail_pesanan")
+                <td className="py-3 px-4 text-xs">
+                  <button
+                    onClick={() =>
+                      router.push(
+                        `/profile/pesanan_terakhir/${item.orderId}/detail_pesanan_terakhir`
+                      )
                     }
-                    className="text-blue-600 hover:underline flex items-center gap-1">
+                    className="cursor-pointer text-blue-600 hover:underline flex items-center gap-1"
+                  >
                     Lihat Detail →
                   </button>
                 </td>
@@ -91,25 +90,50 @@ export default function PesananTerakhirPage() {
       {/* Pagination */}
       <div className="flex justify-center items-center gap-3 mt-6">
         {/* Left */}
-        <button className="w-8 h-8 flex items-center justify-center border rounded-full  hover:bg-orange-500 hover:text-white transition">
-          ←
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`w-8 h-8 flex items-center justify-center border rounded-full transition
+            ${
+              currentPage === 1
+                ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                : "border-orange-500 text-orange-500 cursor-pointer hover:bg-orange-500 hover:text-white"
+            }
+            `}
+        >
+          <ArrowLeft size={16} />
         </button>
 
         {/* Current page */}
-        <button className="w-8 h-8 flex items-center justify-center bg-orange-500 text-white rounded-full">
-          01
-        </button>
-
-        {/* Another page */}
-        <button className="w-8 h-8 flex items-center justify-center border rounded-full hover:bg-orange-500 hover:text-white transition">
-          02
-        </button>
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => paginate(number)}
+            className={`w-8 h-8 flex items-center justify-center rounded-full 
+          ${
+            currentPage === number
+              ? "bg-orange-500 text-white border-none shadow-sm"
+              : "bg-white text-gray-500 border border-gray-300 hover:bg-gray-50"
+          }`}
+          >
+            {number}
+          </button>
+        ))}
 
         {/* Right */}
-        <button className="w-8 h-8 flex items-center justify-center border rounded-full  hover:bg-orange-500 hover:text-white transition">
-          →
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`w-8 h-8 flex items-center justify-center border rounded-full transition
+            ${
+              currentPage === totalPages
+                ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                : "border-orange-500 text-orange-500 cursor-pointer hover:bg-orange-500 hover:text-white"
+            }
+            `}
+        >
+          <ArrowRight size={16} />
         </button>
-
       </div>
     </div>
   );
