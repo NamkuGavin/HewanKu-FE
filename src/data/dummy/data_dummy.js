@@ -8,6 +8,7 @@ import {
   OrderAnimalItem,
   OrderAdopsi,
 } from "@/data/models/dummy/animal_last_order";
+import { OrderData } from "@/data/models/dummy/order_data_model";
 import { IconAssets, ImageAssets } from "@/common/constant/assets";
 
 export const dummyHewanUnggulan = [
@@ -514,3 +515,51 @@ export const dummyOrderAdopsi = [
     ],
   }),
 ];
+
+export const dummyOrderData = new OrderData({
+  orderId: "#96459761",
+  animalCount: "1 Hewan",
+  estimatedTime: "Form pengajuan kemungkinan dibaca 1-3 hari",
+  price: "RP2.000.000",
+  orderDate: "23 Oktober 2025",
+  formStatus: "approved", // 'pending' | 'approved' | 'rejected'
+  paymentStatus: "processing", // 'pending' | 'processing' | 'success' | 'failed'
+  activities: {
+    form: [
+      {
+        title: "Penjual sudah menyetujui data diri anda",
+        date: "23 Jan, 2025 pada 07:32 WIB",
+        status: "completed",
+      },
+      {
+        title: "Form anda sudah dibaca penjual",
+        date: "20 Jan, 2025 pada 07:35 WIB",
+        status: "completed",
+      },
+      {
+        title: "Form sudah masuk di notif penjual",
+        date: "19 Jan, 2025 pada 07:00 WIB",
+        status: "completed",
+      },
+    ],
+    payment: [
+      {
+        title: "Silahkan melakukan pembayaran",
+        note: "(ingat perhatikan deadline pembayaran)",
+        date: "19 Jan, 2025 pada 07:00 WIB",
+        status: "warning",
+      },
+      {
+        title: "Pembayaran Sudah Berhasil",
+        date: "20 Jan, 2025 pada 07:32 WIB",
+        status: "warning",
+      },
+      {
+        title: "Silahkan Chat Penjual",
+        phone: "+62813678890",
+        date: "23 Jan, 2025 pada 07:32 WIB",
+        status: "warning",
+      },
+    ],
+  },
+});

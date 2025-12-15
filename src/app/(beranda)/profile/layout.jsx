@@ -23,7 +23,7 @@ export default function ProfileLayout({ children }) {
       label: "Pesanan Saya",
       icon: IconAssets.mappinIcon,
       iconActive: IconAssets.mappinActiveActiveIcon,
-      href: "/profile/pesanan",
+      href: "/profile/pesanan/status_form",
     },
     {
       id: "terakhir",

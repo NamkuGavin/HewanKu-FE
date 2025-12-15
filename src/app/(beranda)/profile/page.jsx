@@ -23,7 +23,8 @@ import { Button } from "@/components/ui/button";
 
 export default function AkunSayaPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const inputType = showPassword ? "text" : "password";
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
   return (
     <Column>
@@ -149,8 +150,7 @@ export default function AkunSayaPage() {
             UBAH PASSWORD
           </Text>
         </Container>
-        <Column className="w-full p-4">
-          {" "}
+        <Column className="w-full p-4" crossAxisAlignment="start">
           <div className="grid w-full gap-2">
             <Label htmlFor="currentPassword">Password Sekarang</Label>
             <div className="relative">
@@ -169,6 +169,57 @@ export default function AkunSayaPage() {
               </button>
             </div>
           </div>
+          <SizedBox height={20} />
+          <div className="grid w-full gap-2">
+            <Label htmlFor="currentPassword">Password Baru</Label>
+            <div className="relative">
+              <Input
+                id="currentPassword"
+                type={showNewPassword ? "text" : "password"}
+                placeholder="8+ Karakter"
+                className="bg-white rounded-sm pr-10 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+          <SizedBox height={20} />
+          <div className="grid w-full gap-2">
+            <Label htmlFor="currentPassword">Konfirmasi Password</Label>
+            <div className="relative">
+              <Input
+                id="currentPassword"
+                type={showConfirmNewPassword ? "text" : "password"}
+                placeholder=""
+                className="bg-white rounded-sm pr-10 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmNewPassword(!showConfirmNewPassword)
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {showConfirmNewPassword ? (
+                  <EyeOff size={18} />
+                ) : (
+                  <Eye size={18} />
+                )}
+              </button>
+            </div>
+          </div>
+          <SizedBox height={20} />
+          <Button
+            type="submit"
+            className="h-[40px] w-1/4 bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm"
+          >
+            Change Password
+          </Button>
         </Column>
       </Container>
     </Column>
