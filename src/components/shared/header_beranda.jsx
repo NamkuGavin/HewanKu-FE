@@ -4,12 +4,24 @@ import { cn } from "@/lib/utils";
 import { Heart, Search, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import * as React from "react";
 import { ImageAssets } from "@/common/constant/assets";
 import { Row, Container } from "@/components/shared/custom_widget";
 
 export default function HeaderBeranda() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [keyword, setKeyword] = React.useState(
+    searchParams.get("search") ?? ""
+  );
+
+  // sync kalau user back/forward atau query berubah
+  React.useEffect(() => {
+    setKeyword(searchParams.get("search") ?? "");
+  }, [searchParams]);
 
   const leftItems = [
     { name: "Home", label: "Home", href: "/home" },
@@ -24,6 +36,15 @@ export default function HeaderBeranda() {
   ];
 
   const isActive = (href) => pathname === href;
+
+  const onSubmitSearch = () => {
+    const q = keyword.trim();
+    if (!q) {
+      router.push("/adopsi"); // balik normal
+      return;
+    }
+    router.push(`/adopsi?search=${encodeURIComponent(q)}`);
+  };
 
   return (
     <Container
@@ -74,16 +95,26 @@ export default function HeaderBeranda() {
           crossAxisAlignment="center"
           className="w-auto gap-4"
         >
+          {/* SEARCH */}
           <div className="flex items-center bg-gray-50 rounded-full w-full max-w-md">
             <input
               type="text"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") onSubmitSearch();
+              }}
               placeholder="Cari Hewan..."
               className="flex-1 pl-4 bg-transparent outline-none text-gray-600 placeholder-gray-400 text-sm"
             />
-            <button className="bg-black text-white rounded-full p-2 flex items-center justify-center hover:bg-gray-800 transition cursor-pointer">
+            <button
+              onClick={onSubmitSearch}
+              className="bg-black text-white rounded-full p-2 flex items-center justify-center hover:bg-gray-800 transition cursor-pointer"
+            >
               <Search size={15} />
             </button>
           </div>
+
           {rightItems.map((item) => (
             <Link key={item.name} href={item.href}>
               <button className="p-2 hover:bg-gray-100 rounded-full cursor-pointer">
