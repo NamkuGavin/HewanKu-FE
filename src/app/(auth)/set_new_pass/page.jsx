@@ -1,26 +1,70 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { IconAssets, ImageAssets } from "@/common/constant/assets";
-import { SizedBox, Text, Row } from "@/components/shared/custom_widget";
+import { SizedBox, Text } from "@/components/shared/custom_widget";
 import { FloatingInput } from "@/components/shared/floating_input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useNavigator } from "@/utils/helper";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 export default function SetnewpassPage() {
   const nav = useNavigator();
+  const { changePass, isLoading } = useAuth();
+  const searchParams = useSearchParams();
 
-  const router = useRouter();
+  const email = searchParams.get("email") || "";
+
   const [formData, setFormData] = useState({
-    pass: "",
+    password: "",
     confirmPass: "",
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email) {
+      toast.error("Email tidak ditemukan. Ulangi proses forgot password.");
+      nav.replace("/forgot_pass");
+      return;
+    }
+
+    if (!formData.password || !formData.confirmPass) {
+      toast.error("Password dan Confirm Password wajib diisi");
+      return;
+    }
+
+    // optional validasi minimal
+    if (formData.password.length < 8) {
+      toast.error("Password minimal 8 karakter");
+      return;
+    }
+
+    // Kamu bilang password dan repassword boleh sama aja (memang seharusnya sama)
+    // Tapi tetap bagus UX-nya: pastikan confirm sama
+    if (formData.password !== formData.confirmPass) {
+      toast.error("Password dan Confirm Password tidak sama");
+      return;
+    }
+
+    const payload = {
+      email,
+      password: formData.password,
+      repassword: formData.confirmPass,
+    };
+
+    const result = await changePass(payload);
+
+    if (result?.success) {
+      nav.pushAndRemoveUntil("/login");
+    }
   };
 
   return (
@@ -37,39 +81,51 @@ export default function SetnewpassPage() {
         </div>
 
         <SizedBox height={50} />
+
         <Text className="text-3xl font-[600]">Set a password</Text>
+
         <SizedBox height={15} />
+
         <Text className="text-base font-[400]">
-          Your previous password has been reseted. Please set a new password for
+          Your previous password has been reset. Please set a new password for
           your account.
         </Text>
+
         <SizedBox height={50} />
-        <FloatingInput
-          id="password"
-          name="password"
-          type="password"
-          label="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <SizedBox height={20} />
-        <FloatingInput
-          id="confirmPass"
-          name="confirmPass"
-          type="password"
-          label="Confirm Password"
-          value={formData.confirmPass}
-          onChange={handleChange}
-          required
-        />
-        <SizedBox height={30} />
-        <Button
-          onClick={() => nav.pushAndRemoveUntil("/login")}
-          className="h-[45px] w-full bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm"
-        >
-          Set password
-        </Button>
+
+        <form onSubmit={handleSubmit}>
+          <FloatingInput
+            id="password"
+            name="password"
+            type="password"
+            label="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
+          <SizedBox height={20} />
+
+          <FloatingInput
+            id="confirmPass"
+            name="confirmPass"
+            type="password"
+            label="Confirm Password"
+            value={formData.confirmPass}
+            onChange={handleChange}
+            required
+          />
+
+          <SizedBox height={30} />
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="h-[45px] w-full bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm disabled:opacity-60"
+          >
+            {isLoading ? "Saving..." : "Set password"}
+          </Button>
+        </form>
       </div>
 
       {/* Sisi Kanan */}

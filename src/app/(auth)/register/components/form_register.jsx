@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { SizedBox, Text, Row } from "@/components/shared/custom_widget";
+import { SizedBox, Row } from "@/components/shared/custom_widget";
 import { FloatingInput } from "@/components/shared/floating_input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function FormRegister() {
+  const { register, isLoading } = useAuth();
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,12 +24,58 @@ export default function FormRegister() {
     confirmPass: "",
   });
 
+  const [agree, setAgree] = useState(false);
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.password ||
+      !formData.confirmPass
+    ) {
+      toast.error("Semua field wajib diisi");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast.error("Password minimal 8 karakter");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPass) {
+      toast.error("Password dan konfirmasi password tidak sama");
+      return;
+    }
+
+    if (!agree) {
+      toast.error("Anda harus menyetujui Terms & Privacy Policy");
+      return;
+    }
+
+    const payload = {
+      email: formData.email,
+      nama: `${formData.firstName} ${formData.lastName}`.trim(),
+      noTelepon: formData.phone,
+      password: formData.password,
+    };
+
+    const result = await register(payload);
+
+    if (result?.success) {
+      router.push("/login");
+    }
   };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <Row>
         <div className="flex-1">
           <FloatingInput
@@ -40,7 +92,6 @@ export default function FormRegister() {
           <FloatingInput
             id="lastName"
             name="lastName"
-            type="lastName"
             label="Last Name"
             value={formData.lastName}
             onChange={handleChange}
@@ -48,7 +99,9 @@ export default function FormRegister() {
           />
         </div>
       </Row>
+
       <SizedBox height={15} />
+
       <Row>
         <div className="flex-1">
           <FloatingInput
@@ -72,7 +125,9 @@ export default function FormRegister() {
           />
         </div>
       </Row>
+
       <SizedBox height={15} />
+
       <FloatingInput
         id="password"
         name="password"
@@ -82,7 +137,9 @@ export default function FormRegister() {
         onChange={handleChange}
         required
       />
+
       <SizedBox height={15} />
+
       <FloatingInput
         id="confirmPass"
         name="confirmPass"
@@ -92,46 +149,46 @@ export default function FormRegister() {
         onChange={handleChange}
         required
       />
+
       <SizedBox height={15} />
+
       <div className="flex items-center gap-3">
         <Checkbox
           id="agreeTerms"
-          className="cursor-pointer data-[state=checked]:bg-[#FF8D28] data-[state=checked]:border-bg-[#FF8D28]"
+          checked={agree}
+          onCheckedChange={(v) => setAgree(Boolean(v))}
+          className="cursor-pointer data-[state=checked]:bg-[#FF8D28]"
         />
-        <Label htmlFor="agreeTerms" className="text-center font-[500] text-sm">
-          I agree to all the{""}
-          <Link
-            href="/terms"
-            className="font-[500] hover:underline text-[#FF8D28]"
-          >
+        <Label htmlFor="agreeTerms" className="text-sm font-[500]">
+          I agree to{" "}
+          <Link href="/terms" className="text-[#FF8D28] hover:underline">
             Terms
-          </Link>
-          and{""}
-          <Link
-            href="/privacy"
-            className="font-[500] hover:underline text-[#FF8D28]"
-          >
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-[#FF8D28] hover:underline">
             Privacy Policies
           </Link>
         </Label>
       </div>
+
       <SizedBox height={30} />
+
       <Button
         type="submit"
-        className="h-[45px] w-full bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm"
+        disabled={isLoading}
+        className="h-[45px] w-full bg-[#FF8D28] hover:bg-[#FBA81F] rounded-sm disabled:opacity-60 cursor-pointer"
       >
-        Create account
+        {isLoading ? "Creating account..." : "Create account"}
       </Button>
+
       <SizedBox height={12} />
+
       <p className="text-center font-[500] text-sm">
         Already have an account?{" "}
-        <Link
-          href="/login"
-          className="font-[500] hover:underline text-[#FF8D28]"
-        >
+        <Link href="/login" className="text-[#FF8D28] hover:underline">
           Login
         </Link>
       </p>
-    </div>
+    </form>
   );
 }
