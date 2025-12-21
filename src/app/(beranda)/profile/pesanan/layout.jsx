@@ -5,8 +5,6 @@ import { Row, Container } from "@/components/shared/custom_widget";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect } from "react";
-
-// ambil data global dummy kamu
 import { dummyOrderData } from "@/data/dummy/data_dummy";
 
 export default function TrackPesananLayout({ children }) {
@@ -30,7 +28,6 @@ export default function TrackPesananLayout({ children }) {
 
   const isPaymentTabDisabled = !dummyOrderData.isPaymentAccessible;
 
-  // ✅ Guard: kalau user buka URL payment langsung tapi belum approved
   useEffect(() => {
     if (
       pathname === "/profile/pesanan/status_pembayaran" &&
