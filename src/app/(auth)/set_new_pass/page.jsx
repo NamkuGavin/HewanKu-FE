@@ -41,14 +41,11 @@ export default function SetnewpassPage() {
       return;
     }
 
-    // optional validasi minimal
     if (formData.password.length < 8) {
       toast.error("Password minimal 8 karakter");
       return;
     }
 
-    // Kamu bilang password dan repassword boleh sama aja (memang seharusnya sama)
-    // Tapi tetap bagus UX-nya: pastikan confirm sama
     if (formData.password !== formData.confirmPass) {
       toast.error("Password dan Confirm Password tidak sama");
       return;
