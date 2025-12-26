@@ -21,31 +21,19 @@ export default function About() {
         crossAxisAlignment="start"
       >
         <Container className="w-2/5">
-          <ReadMoreText
-            maxLines={3}
-            className="font-normal text-left"
-            textSize={15}
-          >
-            At et vehicula sodales est proin turpis pellentesque sinulla a
-            aliquam amet rhoncus quisque eget sit. Sociis blandit et
-            pellentesque aliquet at quisque tortor lacinia nullam. Mattis aenean
-            scelerisque dui libero cras arcu in egestas sagittis.
-          </ReadMoreText>
+          <Text maxLines={3} className="font-normal text-left" textSize={15}>
+            HewanKu adalah platform digital yang dirancang untuk menjembatani
+            kebutuhan adopsi hewan dengan proses yang aman, transparan, dan
+            bertanggung jawab.
+          </Text>
         </Container>
         <Container className="w-2/5">
-          <ReadMoreText
-            maxLines={3}
-            className="font-normal text-left"
-            textSize={15}
-          >
-            Aliquet ultrices risus dolor gravida. Faucibus sodales semper a
-            magnis sapien viverra purus sed tortor. Amet risus blandit nunc odio
-            rutrum. Adipiscing tincidunt imperdiet at cursus ipsum vulputate
-            pharetra. Tellus nulla commodo ut ut auctor orci blandit at elit .
-            Turpis pulvinar sagittis tristique aliquam vitae ipsum dui. Amet
-            tempor posuere mi amet vel lobortis bibendum. Commodo purus
-            tincidunt cursus tellus massa vel viverra.
-          </ReadMoreText>
+          <Text maxLines={3} className="font-normal text-left" textSize={15}>
+            HewanKu percaya bahwa setiap hewan berhak mendapatkan rumah yang
+            layak dan penuh kasih. Oleh karena itu, kami berkomitmen untuk
+            membangun ekosistem adopsi hewan demi menciptakan dampak sosial yang
+            positif bagi masyarakat dan kesejahteraan hewan.
+          </Text>
         </Container>
       </Row>
       <SizedBox height={30} />

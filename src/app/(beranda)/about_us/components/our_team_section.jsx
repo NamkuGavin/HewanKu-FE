@@ -20,8 +20,8 @@ export default function OurTeamSection() {
       <Row mainAxisAlignment="between">
         <Column crossAxisAlignment="center" mainAxisAlignment="center">
           <Image
-            src={ImageAssets.gavinBlur}
-            alt="gavinBlur"
+            src={ImageAssets.gavinProfile}
+            alt="gavinProfile"
             width={350}
             height={350}
             className="rounded-2xl object-cover"
@@ -31,13 +31,29 @@ export default function OurTeamSection() {
             Muhammad Gavin Arasyi
           </Text>
           <Text size={15} className="font-semibold text-left text-stone-500">
-            Front-End
+            Front End Developer
           </Text>
         </Column>
         <Column crossAxisAlignment="center" mainAxisAlignment="center">
           <Image
-            src={ImageAssets.rakaBlur}
-            alt="rakaBlur"
+            src={ImageAssets.aliProfile}
+            alt="aliProfile"
+            width={350}
+            height={350}
+            className="h-88 rounded-2xl object-cover"
+          />
+          <SizedBox height={15} />
+          <Text size={20} className="font-semibold text-center">
+            Ali Luqmanul Hakim
+          </Text>
+          <Text size={15} className="font-semibold text-left text-stone-500">
+            Quality Assurance
+          </Text>
+        </Column>
+        <Column crossAxisAlignment="center" mainAxisAlignment="center">
+          <Image
+            src={ImageAssets.rakaProfile}
+            alt="rakaProfile"
             width={350}
             height={350}
             className="rounded-2xl object-cover"
@@ -47,23 +63,7 @@ export default function OurTeamSection() {
             Redemtus De Ferento Raka
           </Text>
           <Text size={15} className="font-semibold text-left text-stone-500">
-            Back-End
-          </Text>
-        </Column>
-        <Column crossAxisAlignment="center" mainAxisAlignment="center">
-          <Image
-            src={ImageAssets.aliBlur}
-            alt="aliBlur"
-            width={350}
-            height={350}
-            className="rounded-2xl object-cover"
-          />
-          <SizedBox height={15} />
-          <Text size={20} className="font-semibold text-center">
-            Ali Luqmanul Hakim
-          </Text>
-          <Text size={15} className="font-semibold text-left text-stone-500">
-            ???
+            Back End Developer
           </Text>
         </Column>
       </Row>

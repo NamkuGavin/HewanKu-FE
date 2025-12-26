@@ -23,64 +23,33 @@ export default function FounderSection() {
       className="w-full"
     >
       <Image
-        src={ImageAssets.zuhriBlur}
+        src={ImageAssets.zuhriProfile}
         alt="zuhriBlur"
-        width={1250}
-        height={1250}
+        width={1750}
+        height={1750}
         className="rounded-2xl object-cover"
       />
       <SizedBox width={150} />
       <Column crossAxisAlignment="start">
         <Text size={30} className="font-semibold text-left">
-          Zuhri Pratisto
+          Zuhri
         </Text>
         <Text size={15} className="font-semibold text-left text-stone-500">
-          Founder
+          Founder, Project Manager, UI/UX Designer
         </Text>
         <SizedBox height={30} />
-        <div className="w-full">
-          <Text
-            size={15}
-            className={
-              expanded
-                ? `font-semibold text-left text-stone-500 italic line-clamp-none`
-                : `line-clamp-4 font-semibold text-left text-stone-500 italic`
-            }
-          >
-            Nisl nunc vitae integer ridiculus ultrices quam a scelerisque est.
-            Sollicitudin volutpat blandit maecenas ornare dictum tempor. Amet
-            sem non rutrum et duis. Id nisi ac vitae enim neque sapien.
-            <br />
-            <br />
-            Eu arcu consectetur etiam bibendum fermentum sed lobortis fringilla
-            imperdiet. Aliquet ultrices risus dolor gravida. Faucibus sodales
-            semper a magnis sapien viverra purus sed tortor. Amet risus blandit
-            nunc odio rutrum. <br />
-            <br />
-            Adipiscing tincidunt imperdiet at cursus ipsum vulputate pharetra.
-            Tellus nulla commodo ut ut auctor orci blandit at elit. Turpis
-            pulvinar sagittis tristique aliquam vitae ipsum dui. Amet tempor
-            posuere mi amet vel lobortis bibendum. Commodo purus tincidunt
-            cursus tellus massa vel viverra.
-          </Text>
-
-          <Row mainAxisAlignment="start" className="mt-1">
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="text-[#FF8D28] text-xs font-medium hover:underline cursor-pointer"
-            >
-              {expanded ? "See less" : "See more"}
-            </button>
-          </Row>
-        </div>
-        <SizedBox height={20} />
-        <Image
-          src={ImageAssets.ttdZuhri}
-          alt="ttdZuhri"
-          width={100}
-          height={100}
-          className="rounded-2xl object-cover"
-        />
+        <Text
+          size={15}
+          className="font-semibold text-left text-stone-500 italic line-clamp-none"
+        >
+          Sebagai founder, saya melihat bahwa teknologi dapat berperan lebih
+          dari sekadar media informasi. Teknologi seharusnya mampu menjadi
+          sistem yang mengatur proses, menjaga akuntabilitas, dan melindungi
+          kepentingan semua pihak, terutama kesejahteraan hewan. Dari pemikiran
+          tersebut, HewanKu dirancang sebagai platform yang tidak hanya
+          menampilkan data hewan, tetapi juga mengelola proses adopsi secara
+          terstruktur, terverifikasi, dan bertanggung jawab.
+        </Text>
       </Column>
     </Row>
   );

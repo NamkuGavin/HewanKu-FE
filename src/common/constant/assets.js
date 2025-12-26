@@ -32,6 +32,10 @@ export const ImageAssets = {
   aliBlur: "/images/ali_blur.png",
   rakaBlur: "/images/raka_blur.png",
   placeholderAnimal: "/images/placeholder_animal.png",
+  zuhriProfile: "/images/zuhri_profile.png",
+  gavinProfile: "/images/gavin_profile.png",
+  aliProfile: "/images/ali_profile_new.png",
+  rakaProfile: "/images/raka_profile.png",
 };
 
 export const IconAssets = {
