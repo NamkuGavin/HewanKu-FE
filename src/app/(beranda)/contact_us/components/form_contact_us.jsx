@@ -20,7 +20,7 @@ export default function FormContactUs() {
       crossAxisAlignment="start"
       className="gap-12"
     >
-      <Container bg="bg-[#F8F9FA]" className="w-1/2 p-8">
+      <Container bg="bg-[#F8F9FA]" className="w-3/4 p-8">
         <Column crossAxisAlignment="start">
           <Row mainAxisAlignment="between" className="gap-8">
             <div className="grid w-full gap-2">
@@ -70,9 +70,9 @@ export default function FormContactUs() {
         </Text>
         <SizedBox height={12} />
         <Text size={15} className="font-normal text-left">
-          At et vehicula sodales est proin turpis pellentesque sinulla a aliquam
-          amet rhoncus quisque eget sit. Sociis blandit et pellentesque aliquet
-          at quisque tortor lacinia nullam
+          Hubungi kami untuk mendapatkan informasi, bantuan, atau dukungan
+          terkait proses adopsi dan layanan HewanKu. Kami siap membantu Anda
+          dengan respon yang cepat dan terpercaya.
         </Text>
         <SizedBox height={20} />
         <Row className="gap-4">

@@ -1,5 +1,6 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
+import sonarjs from "eslint-plugin-sonarjs";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -13,4 +14,4 @@ const eslintConfig = defineConfig([
   ]),
 ]);
 
-export default eslintConfig;
+export default [sonarjs.configs.recommended];
