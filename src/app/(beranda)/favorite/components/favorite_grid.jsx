@@ -19,7 +19,7 @@ export default function FavoriteGrid() {
   const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
 
   const favoriteAnimals = React.useMemo(() => {
-    return dummyHewan.filter((x) => favoriteIds.includes(x.id));
+    return dummyHewan.filter((x) => favoriteIds.includes(String(x.id)));
   }, [favoriteIds]);
 
   const [currentPage, setCurrentPage] = React.useState(1);

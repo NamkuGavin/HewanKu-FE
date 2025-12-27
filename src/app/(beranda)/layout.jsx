@@ -11,7 +11,7 @@ export default function BerandaLayout({ children }) {
       className="min-h-screen bg-gray-50"
     >
       <HeaderBeranda />
-      <FavoritesProvider>{children}</FavoritesProvider>;
+      <FavoritesProvider>{children}</FavoritesProvider>
       <FooterBeranda />
     </Column>
   );

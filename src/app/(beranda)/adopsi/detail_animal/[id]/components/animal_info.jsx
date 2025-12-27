@@ -16,17 +16,16 @@ import {
 } from "@/components/shared/custom_widget";
 import Image from "next/image";
 import { formatRupiah, useNavigator } from "@/utils/helper";
+import { useFavorites } from "@/contexts/favorite-context";
 
 export default function AnimalInfo({ animalId }) {
   const nav = useNavigator();
 
   const [rating, setRating] = useState(4.7);
   const [discount, setDiscount] = useState(21);
-  const [isFavorite, setIsFavorite] = useState(false);
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const fav = isFavorite(animalId);
 
   return (
     <Column crossAxisAlignment="start" className="w-full">
@@ -41,10 +40,12 @@ export default function AnimalInfo({ animalId }) {
           (21,671 User feedback)
         </Text>
       </Row>
+
       <SizedBox height={5} />
       <Text className="font-normal mb-2">
         Ali - Labrador RetrieverMangilao, GU
       </Text>
+
       <SizedBox height={5} />
       <div className="w-full grid grid-cols-2 gap-2">
         <div className="flex gap-1">
@@ -66,6 +67,7 @@ export default function AnimalInfo({ animalId }) {
           <span className="font-semibold text-xs">Anjing</span>
         </div>
       </div>
+
       <SizedBox height={15} />
       <Row className="gap-2">
         <Text className="font-semibold text-[#2DA5F3] text-lg">
@@ -80,7 +82,9 @@ export default function AnimalInfo({ animalId }) {
           <Text className="font-semibold text-xs">{discount}% OFF</Text>
         </Container>
       </Row>
+
       <Separator className="my-5" />
+
       <Button
         onClick={() =>
           nav.push(`/adopsi/detail_animal/${animalId}/forum_informasi`)
@@ -92,24 +96,33 @@ export default function AnimalInfo({ animalId }) {
           Adopsi sekarang
         </Text>
       </Button>
+
       <Row mainAxisAlignment="between" className="w-full my-4">
         <div className="flex items-center justify-center">
           <Button
-            onClick={toggleFavorite}
+            onClick={() => toggleFavorite(animalId)} // ✅ pakai context
             className="border-none hover:bg-transparent cursor-pointer"
             variant="ghost"
             aria-label="Add to wishlist"
           >
             <Heart
               className={`transition-all ${
-                isFavorite
-                  ? "fill-[#FF8D28] text-[#FF8D28]"
-                  : "fill-transparent"
+                fav ? "fill-[#FF8D28] text-[#FF8D28]" : "fill-transparent"
               }`}
             />
           </Button>
+
           <Text className="font-normal text-[#475156] text-xs">
-            Menambahkan ke Favorit
+            {fav ? "Tersimpan di Favorit" : "Menambahkan ke Favorit"}
+          </Text>
+        </div>
+        <div
+          onClick={() =>
+            nav.push(`/adopsi/detail_animal/${animalId}/review_animal`)
+          }
+        >
+          <Text className="font-normal text-[#F87537] text-xs cursor-pointer hover:underline">
+            Lihat Review Hewan
           </Text>
         </div>
         <div className="flex items-center justify-center gap-5">
@@ -135,6 +148,7 @@ export default function AnimalInfo({ animalId }) {
           </div>
         </div>
       </Row>
+
       <Container className="bg-transparent border border-[#E4E7E9] px-5 pt-5 pb-2 w-full">
         <Column crossAxisAlignment="start">
           <Text className="font-normal text-xs">
@@ -153,7 +167,7 @@ export default function AnimalInfo({ animalId }) {
             />
             <Image
               src={ImageAssets.qrisLogo}
-              alt="instagram"
+              alt="qris"
               width={50}
               height={50}
             />

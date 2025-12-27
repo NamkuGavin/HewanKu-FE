@@ -9,6 +9,7 @@ import {
   OrderAdopsi,
 } from "@/data/models/dummy/animal_last_order";
 import { OrderData } from "@/data/models/dummy/order_data_model";
+import { Review } from "@/data/models/dummy/review_model";
 import { IconAssets, ImageAssets } from "@/common/constant/assets";
 
 export const dummyHewanUnggulan = [
@@ -563,3 +564,38 @@ export const dummyOrderData = new OrderData({
     ],
   },
 });
+
+export const dummyReviews = [
+  new Review({
+    id: 1,
+    userName: "Gavin",
+    userAvatar: ImageAssets.placeholderAnimal,
+    time: "Sekarang",
+    rating: 5,
+    comment: "Anjingnya lucu",
+  }),
+  new Review({
+    id: 2,
+    userName: "Raka",
+    userAvatar: ImageAssets.placeholderAnimal,
+    time: "2 menit lalu",
+    rating: 5,
+    comment: "Anjing nya lucu imut",
+  }),
+  new Review({
+    id: 3,
+    userName: "Zuhri",
+    userAvatar: ImageAssets.placeholderAnimal,
+    time: "21 mins ago",
+    rating: 5,
+    comment: "anjingnya nya kerennn",
+  }),
+  new Review({
+    id: 4,
+    userName: "Nanda",
+    userAvatar: ImageAssets.placeholderAnimal,
+    time: "1 hari lalu",
+    rating: 4,
+    comment: "Sehat dan aktif, ramah juga. Admin fast respon.",
+  }),
+];
