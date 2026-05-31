@@ -1,139 +1,264 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
+  getAuthSession as getAuthSessionAction,
   login as loginAction,
+  logout as logoutAction,
   register as registerAction,
   forgotPassword as forgotPasswordAction,
   verifyOTP as verifyOTPAction,
   changePass as changePassAction,
 } from "@/actions/auth.action";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  isAuthErrorStatus,
+  isSuccessStatus,
+  resolveApiMessage,
+  resolveApiTitle,
+  toStatusCode,
+} from "@/utils/apiStatus";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const AuthContext = createContext(null);
+const LOGIN_PATH = "/login";
+
+function getResponseStatus(response) {
+  return toStatusCode(response, null);
+}
+
+function isExpectedResponse(response, expectedStatuses) {
+  if (response?.success === false) {
+    return false;
+  }
+
+  const statusCode = getResponseStatus(response);
+
+  if (statusCode === null) {
+    return true;
+  }
+
+  if (expectedStatuses?.length) {
+    return expectedStatuses.includes(statusCode);
+  }
+
+  return isSuccessStatus(statusCode);
+}
+
+function buildFailureResult(response, fallbackMessage) {
+  const statusCode = getResponseStatus(response);
+
+  return {
+    success: false,
+    statusCode,
+    message: resolveApiMessage(response, fallbackMessage, statusCode ?? 500),
+    details: response?.details ?? null,
+  };
+}
+
+function buildSuccessResult(response, fallbackMessage) {
+  return {
+    success: true,
+    data: response?.data,
+    message: response?.message || fallbackMessage,
+  };
+}
 
 export function AuthProvider({ children }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiAlert, setApiAlert] = useState(null);
 
-  const login = async ({ body }) => {
-    setIsLoading(true);
-    try {
-      const res = await loginAction({ body });
+  useEffect(() => {
+    let ignore = false;
 
-      if (res?.code !== 200) {
-        toast.error(res?.message || "Login failed");
-        return;
+    const syncSession = async () => {
+      try {
+        const session = await getAuthSessionAction();
+
+        if (!ignore && !session?.isAuthenticated) {
+          setUser(null);
+        }
+      } catch (error) {
+        if (!ignore) {
+          setUser(null);
+        }
       }
+    };
 
-      setUser(res.data);
-      router.push("/home");
-    } catch (error) {
-      toast.error(error?.message || "Login failed");
-    } finally {
-      setIsLoading(false);
-    }
+    syncSession();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const showApiError = (response, fallbackMessage) => {
+    const statusCode = getResponseStatus(response);
+
+    setApiAlert({
+      statusCode,
+      title: resolveApiTitle(statusCode),
+      message: resolveApiMessage(response, fallbackMessage, statusCode ?? 500),
+    });
   };
 
-  const logout = () => {
+  const clearAuthState = () => {
     setUser(null);
-    router.push("/auth/login");
   };
 
-  const register = async (payload) => {
-    try {
-      const res = await registerAction({ body: payload });
+  const redirectToLogin = (message) => {
+    clearAuthState();
 
-      if (res?.code === 201) {
-        toast.success("Register berhasil, silakan login");
-        return { success: true };
-      }
-
-      toast.error(res?.message || "Register failed");
-      return { success: false };
-    } catch (error) {
-      toast.error(error?.message || "Register failed");
-      return { success: false };
+    if (message) {
+      toast.error(message);
     }
+
+    router.replace(LOGIN_PATH);
+    router.refresh();
   };
 
-  const forgotPassword = async (data) => {
+  const handleApiError = async (response, fallbackMessage) => {
+    const statusCode = getResponseStatus(response);
+
+    if (!isAuthErrorStatus(statusCode)) {
+      return false;
+    }
+
+    await logoutAction();
+    redirectToLogin(
+      resolveApiMessage(
+        response,
+        fallbackMessage || "Sesi login sudah berakhir. Silakan login ulang.",
+        statusCode ?? 401,
+      ),
+    );
+
+    return true;
+  };
+
+  const runAuthRequest = async ({
+    request,
+    successStatuses,
+    successMessage,
+    errorMessage,
+    onSuccess,
+    requireSession = false,
+    redirectOnAuthError = false,
+  }) => {
     setIsLoading(true);
 
     try {
-      const res = await forgotPasswordAction({ body: data });
+      const res = await request();
 
-      if (res?.code >= 200 && res?.code < 300) {
-        toast.success(res?.message || "OTP berhasil dikirim");
-        return { success: true, message: res?.message || "OTP sent" };
+      if (!isExpectedResponse(res, successStatuses)) {
+        if (redirectOnAuthError && (await handleApiError(res, errorMessage))) {
+          return buildFailureResult(res, errorMessage);
+        }
+
+        showApiError(res, errorMessage);
+        return buildFailureResult(res, errorMessage);
       }
 
-      toast.error(res?.message || "Send OTP failed");
-      return {
-        success: false,
-        statusCode: res?.code,
-        message: res?.message || "Send OTP failed",
-      };
+      if (requireSession && res?.session?.isAuthenticated === false) {
+        const sessionError = {
+          ...res,
+          success: false,
+          code: 401,
+          statusCode: 401,
+          message:
+            res.session?.message ||
+            "Token login tidak ditemukan dari response API.",
+        };
+
+        await logoutAction();
+        showApiError(sessionError, errorMessage);
+        return buildFailureResult(sessionError, errorMessage);
+      }
+
+      if (successMessage) {
+        toast.success(res?.message || successMessage);
+      }
+
+      if (onSuccess) {
+        await onSuccess(res);
+      }
+
+      return buildSuccessResult(res, successMessage);
     } catch (error) {
-      toast.error(error?.message || "Send OTP failed");
-      return { success: false, message: error?.message || "Send OTP failed" };
+      if (redirectOnAuthError && (await handleApiError(error, errorMessage))) {
+        return buildFailureResult(error, errorMessage);
+      }
+
+      showApiError(error, errorMessage);
+      return buildFailureResult(error, errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const verifyOTP = async (data) => {
+  const login = async ({ body }) =>
+    runAuthRequest({
+      request: () => loginAction({ body }),
+      successStatuses: [200],
+      requireSession: true,
+      errorMessage: "Login failed",
+      onSuccess: (res) => {
+        setUser(res.user ?? res.data);
+        router.push("/home");
+        router.refresh();
+      },
+    });
+
+  const logout = async () => {
     setIsLoading(true);
 
     try {
-      const res = await verifyOTPAction({ body: data });
-      if (res?.code >= 200 && res?.code < 300) {
-        toast.success(res?.message || "OTP berhasil diverifikasi");
-        return { success: true, message: res?.message || "Verified" };
-      }
-
-      toast.error(res?.message || "Verify OTP failed");
-      return {
-        success: false,
-        statusCode: res?.code,
-        message: res?.message || "Verify OTP failed",
-      };
-    } catch (error) {
-      toast.error(error?.message || "Verify OTP failed");
-      return { success: false, message: error?.message || "Verify OTP failed" };
+      await logoutAction();
+      redirectToLogin();
     } finally {
       setIsLoading(false);
     }
   };
 
-  const changePass = async (data) => {
-    setIsLoading(true);
+  const register = async (payload) =>
+    runAuthRequest({
+      request: () => registerAction({ body: payload }),
+      successStatuses: [200, 201],
+      successMessage: "Register berhasil, silakan login",
+      errorMessage: "Register failed",
+    });
 
-    try {
-      const res = await changePassAction({ body: data });
-      if (res?.code >= 200 && res?.code < 300) {
-        toast.success(res?.message || "Password berhasil diubah");
-        return { success: true, message: res?.message };
-      }
+  const forgotPassword = async (data) =>
+    runAuthRequest({
+      request: () => forgotPasswordAction({ body: data }),
+      successMessage: "OTP berhasil dikirim",
+      errorMessage: "Send OTP failed",
+    });
 
-      toast.error(res?.message || "Change password failed");
-      return {
-        success: false,
-        statusCode: res?.code,
-        message: res?.message || "Change password failed",
-      };
-    } catch (error) {
-      toast.error(error?.message || "Change password failed");
-      return {
-        success: false,
-        message: error?.message || "Change password failed",
-      };
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const verifyOTP = async (data) =>
+    runAuthRequest({
+      request: () => verifyOTPAction({ body: data }),
+      successMessage: "OTP berhasil diverifikasi",
+      errorMessage: "Verify OTP failed",
+    });
+
+  const changePass = async (data) =>
+    runAuthRequest({
+      request: () => changePassAction({ body: data }),
+      successMessage: "Password berhasil diubah",
+      errorMessage: "Change password failed",
+    });
 
   const authState = {
     user,
@@ -144,10 +269,45 @@ export function AuthProvider({ children }) {
     forgotPassword,
     verifyOTP,
     changePass,
+    handleApiError,
   };
 
   return (
-    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authState}>
+      {children}
+
+      <AlertDialog
+        open={Boolean(apiAlert)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setApiAlert(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{apiAlert?.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {apiAlert?.message}
+              {apiAlert?.statusCode !== null &&
+              apiAlert?.statusCode !== undefined ? (
+                <span className="mt-2 block text-xs">
+                  Status code: {apiAlert.statusCode}
+                </span>
+              ) : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => setApiAlert(null)}
+              className="bg-[#FF8D28] hover:bg-[#FBA81F]"
+            >
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </AuthContext.Provider>
   );
 }
 

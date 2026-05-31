@@ -6,9 +6,11 @@ import { Container, Row } from "@/components/shared/custom_widget";
 import HeroSectionBeranda from "@/components/shared/hero_section_beranda";
 import { IconAssets, ImageAssets } from "@/common/constant/assets";
 import Image from "next/image";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function ProfileLayout({ children }) {
   const pathname = usePathname();
+  const { logout, isLoading } = useAuth();
 
   const menuItems = [
     {
@@ -37,7 +39,6 @@ export default function ProfileLayout({ children }) {
       label: "Log-out",
       icon: IconAssets.signOutIcon,
       iconActive: IconAssets.signOutActiveIcon,
-      href: "/logout",
     },
   ];
 
@@ -54,22 +55,18 @@ export default function ProfileLayout({ children }) {
               <div className="bg-white border border-gray-200 overflow-hidden shadow-sm">
                 {menuItems.map((item, index) => {
                   const isActive = pathname === item.href;
-
-                  return (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      className={`
-                        flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors
-                        ${isActive ? "bg-[#FA8232] text-white" : ""}
-                        ${!isActive ? "hover:bg-gray-50" : ""}
-                        ${
-                          index !== menuItems.length - 1
-                            ? "border-b border-gray-200"
-                            : ""
-                        }
-                      `}
-                    >
+                  const itemClass = `
+                    flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors
+                    ${isActive ? "bg-[#FA8232] text-white" : ""}
+                    ${!isActive ? "hover:bg-gray-50" : ""}
+                    ${
+                      index !== menuItems.length - 1
+                        ? "border-b border-gray-200"
+                        : ""
+                    }
+                  `;
+                  const content = (
+                    <>
                       <span className="text-lg">
                         <Image
                           src={isActive ? item.iconActive : item.icon}
@@ -79,6 +76,30 @@ export default function ProfileLayout({ children }) {
                         />
                       </span>
                       <span className="text-sm font-medium">{item.label}</span>
+                    </>
+                  );
+
+                  if (item.id === "logout") {
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={logout}
+                        disabled={isLoading}
+                        className={`${itemClass} w-full text-left disabled:opacity-60`}
+                      >
+                        {content}
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={item.id}
+                      href={item.href}
+                      className={itemClass}
+                    >
+                      {content}
                     </Link>
                   );
                 })}

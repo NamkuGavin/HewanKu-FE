@@ -1,49 +1,72 @@
-import { toast } from "react-toastify";
-import request from "./baseRequest";
+import { apiRequest } from "./baseRequest";
+import { toStatusCode } from "./apiStatus";
 
 /**
- * Melakukan permintaan HTTP menggunakan metode yang ditentukan dan mengelola kes alahan yang mungkin terjadi.
+ * Wrapper API umum untuk menjaga kompatibilitas pemakaian baseFetch lama.
  *
  * @param {Object} data - Data untuk permintaan.
- * @param {Object} params - Params untuk permintaan.
  * @param {string} data.url - URL untuk permintaan (required).
- * @param {string} data.method - Metode HTTP yang digunakan (required, contoh: 'GET', 'POST').
- * @param {Object} [data.payload={}] - Payload untuk permintaan, jika ada (default: {}).
+ * @param {string} data.method - Metode HTTP, contoh: GET, POST, PUT, DELETE.
+ * @param {Object} [data.payload] - Payload lama untuk body request.
+ * @param {Object} [data.body] - Body request baru.
+ * @param {Object} [data.params] - Query params.
+ * @param {Object} [data.headers] - Header tambahan.
+ * @param {string} [data.token] - Token authorization.
  * @param {Object} [data.options] - Opsi tambahan untuk permintaan.
- * @param {Array<number>} [data.options.excludeShowErrorStatusCode] - Daftar status code yang tidak akan ditampilkan sebagai kesalahan.
  * @param {Array<number>} [data.options.returnDataWhenError] - Daftar status code yang akan mengembalikan data.
- * @returns {Promise<Object>} - Mengembalikan data dari respons.
- * @throws {Error} - Melempar kesalahan jika permintaan gagal.
+ * @param {boolean} [data.options.throwOnError] - Jika true, error API dilempar.
+ * @returns {Promise<Object>} - Data response atau object error yang sudah dinormalisasi.
  */
 export const fetch = async (data) => {
-  try {
-    const payload = data.payload || {};
-    const response = await request({
-      url: data.url,
-      data: payload,
-      method: data.method.toLowerCase(),
-      params: data.params || {},
-    });
-    return response.data;
-  } catch (error) {
-    const errorMessage =
-      error.response?.data?.message || "Something went wrong!";
-    const statusCode = error.response?.status;
+  const {
+    url,
+    method = "GET",
+    payload,
+    body,
+    params,
+    headers,
+    token,
+    authToken,
+    options = {},
+    ...config
+  } = data;
 
-    if (
-      data.options &&
-      data.options.excludeShowErrorStatusCode &&
-      !data.options.excludeShowErrorStatusCode.includes(statusCode)
-    ) {
-      toast.error(`Error: ${errorMessage || "Terjadi kesalahan"}`);
-    }
+  const result = await apiRequest({
+    url,
+    method,
+    body: body ?? payload,
+    params,
+    headers,
+    token,
+    authToken,
+    ...config,
+  });
 
-    if (
-      data.options &&
-      data.options.returnDataWhenError &&
-      data.options.returnDataWhenError.includes(statusCode)
-    ) {
-      return error.response?.data;
-    }
+  const statusCode = toStatusCode(result, null);
+  const shouldThrow =
+    result?.success === false &&
+    options.throwOnError &&
+    !options.returnDataWhenError?.includes(statusCode);
+
+  if (shouldThrow) {
+    throw result;
   }
+
+  return result;
 };
+
+export const get = (url, config = {}) => fetch({ url, method: "GET", ...config });
+
+export const post = (url, body, config = {}) =>
+  fetch({ url, method: "POST", body, ...config });
+
+export const put = (url, body, config = {}) =>
+  fetch({ url, method: "PUT", body, ...config });
+
+export const patch = (url, body, config = {}) =>
+  fetch({ url, method: "PATCH", body, ...config });
+
+export const remove = (url, config = {}) =>
+  fetch({ url, method: "DELETE", ...config });
+
+export default fetch;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import {
   Text,
@@ -20,44 +20,91 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-
-const PROFILE_STORAGE_KEY = "hewanku_profile_dummy";
+import { viewProfile } from "@/actions/profile.action";
+import { useApiRequest } from "@/hooks/use-api-request";
+import { isAuthErrorStatus, toStatusCode } from "@/utils/apiStatus";
+import { toast } from "sonner";
 
 const defaultProfile = {
-  displayName: "Gavin",
-  username: "MGA",
-  namaLengkap: "Muhammad Gavin Arasyi",
-  email: "m.gavin.aga10@gmail.com",
-  noTelephone: "+6282170677488",
-  negara: "indonesia",
-  jalan: "telekomunikasi",
-  zipCode: "1207",
+  displayName: "",
+  username: "",
+  namaLengkap: "",
+  email: "",
+  noTelephone: "",
+  negara: "",
+  jalan: "",
+  zipCode: "",
 };
 
+function mapProfileResponse(data) {
+  return {
+    ...defaultProfile,
+    namaLengkap: data?.nama || "",
+    email: data?.email || "",
+    noTelephone: data?.noTelepon || data?.noTelephone || "",
+  };
+}
+
 export default function AkunSayaPage() {
+  const { run } = useApiRequest();
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
   // ====== PROFILE STATE ======
   const [isEditing, setIsEditing] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
 
   const [profile, setProfile] = useState(defaultProfile);
   const [draft, setDraft] = useState(defaultProfile);
 
-  // load dummy profile dari localStorage
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setProfile({ ...defaultProfile, ...parsed });
-        setDraft({ ...defaultProfile, ...parsed });
+    let ignore = false;
+
+    const loadProfile = async () => {
+      setIsProfileLoading(true);
+
+      try {
+        const res = await run(() => viewProfile(), {
+          errorMessage: "Gagal mengambil profile",
+        });
+
+        if (ignore) {
+          return;
+        }
+
+        if (res?.success === false) {
+          const statusCode = toStatusCode(res);
+
+          if (!isAuthErrorStatus(statusCode)) {
+            toast.error(res?.message || "Gagal mengambil profile");
+          }
+
+          return;
+        }
+
+        const nextProfile = mapProfileResponse(res?.data);
+
+        setProfile(nextProfile);
+        setDraft(nextProfile);
+        setIsEditing(false);
+      } catch (error) {
+        if (!ignore) {
+          toast.error(error?.message || "Gagal mengambil profile");
+        }
+      } finally {
+        if (!ignore) {
+          setIsProfileLoading(false);
+        }
       }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
+    };
+
+    loadProfile();
+
+    return () => {
+      ignore = true;
+    };
+  }, [run]);
 
   const setDraftField = (key, value) => {
     setDraft((prev) => ({ ...prev, [key]: value }));
@@ -79,13 +126,6 @@ export default function AkunSayaPage() {
     // TODO: nanti kalau sudah ada API, panggil API di sini
     setProfile(draft);
     setIsEditing(false);
-
-    // simpan dummy ke localStorage
-    try {
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(draft));
-    } catch (e) {
-      // ignore
-    }
   };
 
   const inputBaseClass =
@@ -117,7 +157,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="displayName"
                     value={draft.displayName}
-                    readOnly={!isEditing}
+                    readOnly={!isEditing || isProfileLoading}
                     onChange={(e) =>
                       setDraftField("displayName", e.target.value)
                     }
@@ -130,7 +170,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="username"
                     value={draft.username}
-                    readOnly={!isEditing}
+                    readOnly={!isEditing || isProfileLoading}
                     onChange={(e) => setDraftField("username", e.target.value)}
                     className={`${inputBaseClass} ${readOnlyClass}`}
                   />
@@ -141,7 +181,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="namaLengkap"
                     value={draft.namaLengkap}
-                    readOnly={!isEditing}
+                    readOnly={!isEditing || isProfileLoading}
                     onChange={(e) =>
                       setDraftField("namaLengkap", e.target.value)
                     }
@@ -154,7 +194,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="email"
                     value={draft.email}
-                    readOnly={!isEditing}
+                    readOnly={!isEditing || isProfileLoading}
                     onChange={(e) => setDraftField("email", e.target.value)}
                     className={`${inputBaseClass} ${readOnlyClass}`}
                   />
@@ -165,7 +205,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="noTelephone"
                     value={draft.noTelephone}
-                    readOnly={!isEditing}
+                    readOnly={!isEditing || isProfileLoading}
                     onChange={(e) =>
                       setDraftField("noTelephone", e.target.value)
                     }
@@ -178,9 +218,9 @@ export default function AkunSayaPage() {
                 <div className="grid w-full gap-2">
                   <Label>Negara/Daerah</Label>
                   <Select
-                    value={draft.negara}
+                    value={draft.negara || undefined}
                     onValueChange={(v) => setDraftField("negara", v)}
-                    disabled={!isEditing}
+                    disabled={!isEditing || isProfileLoading}
                   >
                     <SelectTrigger
                       className={`w-full bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500 ${
@@ -206,9 +246,9 @@ export default function AkunSayaPage() {
                   <div className="grid w-full gap-2">
                     <Label>Jalan</Label>
                     <Select
-                      value={draft.jalan}
+                      value={draft.jalan || undefined}
                       onValueChange={(v) => setDraftField("jalan", v)}
-                      disabled={!isEditing}
+                      disabled={!isEditing || isProfileLoading}
                     >
                       <SelectTrigger
                         className={`w-full bg-white rounded-sm focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:border-orange-500 ${
@@ -241,7 +281,7 @@ export default function AkunSayaPage() {
                     <Input
                       id="zipCode"
                       value={draft.zipCode}
-                      readOnly={!isEditing}
+                      readOnly={!isEditing || isProfileLoading}
                       onChange={(e) => setDraftField("zipCode", e.target.value)}
                       className={`${inputBaseClass} ${readOnlyClass}`}
                     />
@@ -256,9 +296,10 @@ export default function AkunSayaPage() {
                 <Button
                   type="button"
                   onClick={onClickEdit}
+                  disabled={isProfileLoading}
                   className="h-[40px] w-1/4 bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm"
                 >
-                  Update profile
+                  {isProfileLoading ? "Loading..." : "Update profile"}
                 </Button>
               ) : (
                 <Row className="gap-3">
