@@ -27,11 +27,9 @@ import { toast } from "sonner";
 
 const defaultProfile = {
   displayName: "",
-  username: "",
-  namaLengkap: "",
   email: "",
   noTelephone: "",
-  negara: "",
+  negaraDaerah: "",
   jalan: "",
   zipCode: "",
 };
@@ -39,9 +37,12 @@ const defaultProfile = {
 function mapProfileResponse(data) {
   return {
     ...defaultProfile,
-    namaLengkap: data?.nama || "",
+    displayName: data?.displayName || "",
     email: data?.email || "",
     noTelephone: data?.noTelepon || data?.noTelephone || "",
+    negaraDaerah: data?.negaraDaerah || "",
+    jalan: data?.jalan || "",
+    zipCode: data?.zipCode || "",
   };
 }
 
@@ -166,30 +167,6 @@ export default function AkunSayaPage() {
                 </div>
 
                 <div className="grid w-full gap-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    value={draft.username}
-                    readOnly={!isEditing || isProfileLoading}
-                    onChange={(e) => setDraftField("username", e.target.value)}
-                    className={`${inputBaseClass} ${readOnlyClass}`}
-                  />
-                </div>
-
-                <div className="grid w-full gap-2">
-                  <Label htmlFor="namaLengkap">Nama Lengkap</Label>
-                  <Input
-                    id="namaLengkap"
-                    value={draft.namaLengkap}
-                    readOnly={!isEditing || isProfileLoading}
-                    onChange={(e) =>
-                      setDraftField("namaLengkap", e.target.value)
-                    }
-                    className={`${inputBaseClass} ${readOnlyClass}`}
-                  />
-                </div>
-
-                <div className="grid w-full gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
@@ -201,7 +178,7 @@ export default function AkunSayaPage() {
                 </div>
 
                 <div className="grid w-full gap-2">
-                  <Label htmlFor="noTelephone">No. Telephone</Label>
+                  <Label htmlFor="noTelephone">No. Telepon</Label>
                   <Input
                     id="noTelephone"
                     value={draft.noTelephone}
@@ -218,8 +195,8 @@ export default function AkunSayaPage() {
                 <div className="grid w-full gap-2">
                   <Label>Negara/Daerah</Label>
                   <Select
-                    value={draft.negara || undefined}
-                    onValueChange={(v) => setDraftField("negara", v)}
+                    value={draft.negaraDaerah || undefined}
+                    onValueChange={(v) => setDraftField("negaraDaerah", v)}
                     disabled={!isEditing || isProfileLoading}
                   >
                     <SelectTrigger

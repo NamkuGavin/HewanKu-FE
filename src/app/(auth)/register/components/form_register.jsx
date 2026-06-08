@@ -62,9 +62,11 @@ export default function FormRegister() {
 
     const payload = {
       email: formData.email,
-      nama: `${formData.firstName} ${formData.lastName}`.trim(),
+      namaDepan: formData.firstName,
+      namaBelakang: formData.lastName,
       noTelepon: formData.phone,
       password: formData.password,
+      confirmPassword: formData.confirmPass,
     };
 
     const result = await register(payload);
