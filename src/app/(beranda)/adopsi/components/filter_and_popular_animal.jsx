@@ -10,9 +10,7 @@ import {
   Text,
   Column,
   Container,
-  Padding,
   Row,
-  SizedBox,
 } from "@/components/shared/custom_widget";
 
 const Slider = React.forwardRef(({ className, ...props }, ref) => (
@@ -37,30 +35,55 @@ const Slider = React.forwardRef(({ className, ...props }, ref) => (
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;
 
-export default function FilterAndPopularAnimal() {
-  const [value, setValue] = React.useState([750000, 7500000]);
+export default function FilterAndPopularAnimal({
+  hasActiveFilter,
+  isPriceFilterActive,
+  onClearFilters,
+  onPriceChange,
+  priceRange,
+}) {
+  const [value, setValue] = React.useState(priceRange);
   const [from, to] = value;
+
+  React.useEffect(() => {
+    setValue(priceRange);
+  }, [priceRange]);
 
   return (
     <Column className="w-1/4" crossAxisAlignment="start">
       <Text className="font-semibold mb-4">Telusuri berdasarkan Harga</Text>
       <Column className="w-full">
         <Row mainAxisAlignment="between" className="mb-2">
-          <Text className="text-xs">500.000</Text>
+          <Text className="text-xs">0</Text>
           <Text className="text-xs">9.000.000</Text>
         </Row>
         <div className="w-full flex items-center justify-between gap-2">
           <Slider
             value={value}
             onValueChange={setValue}
-            min={500000}
+            onValueCommit={onPriceChange}
+            min={0}
             max={9000000}
             step={100000}
           />
         </div>
         <Text className="mt-4 text-center text-xs font-medium">
-          Harga: {formatRupiah(from)} - {formatRupiah(to)}
+          {isPriceFilterActive
+            ? `Harga: ${formatRupiah(from)} - ${formatRupiah(to)}`
+            : "Harga: Semua"}
         </Text>
+        <button
+          type="button"
+          onClick={onClearFilters}
+          disabled={!hasActiveFilter}
+          className={`mt-4 w-full rounded-sm border px-3 py-2 text-sm font-medium transition-colors ${
+            hasActiveFilter
+              ? "cursor-pointer border-orange-500 text-orange-500 hover:bg-orange-50"
+              : "cursor-not-allowed border-gray-200 text-gray-300"
+          }`}
+        >
+          Clear filter
+        </button>
       </Column>
       <Text className="font-semibold mt-8 mb-4">Hewan Popular</Text>
       <div className="w-full grid grid-cols-1 gap-4">

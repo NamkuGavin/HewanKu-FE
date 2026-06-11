@@ -9,6 +9,21 @@ export async function viewAnimalsForUser() {
   });
 }
 
+export async function getAnimalById(id) {
+  return requestWithAuth({
+    url: `/animalshelter/${id}`,
+    method: "GET",
+  });
+}
+
+export async function filterAnimals({ body }) {
+  return requestWithAuth({
+    url: "/animalshelter/filter",
+    method: "GET",
+    body,
+  });
+}
+
 export async function addFavoriteAnimal(id) {
   return requestWithAuth({
     url: `/pengguna/addFav/${id}`,

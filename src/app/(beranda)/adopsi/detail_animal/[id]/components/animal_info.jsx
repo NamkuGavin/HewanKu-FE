@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { IconAssets, ImageAssets } from "@/common/constant/assets";
 import { Rating, RatingButton } from "@/components/ui/shadcn-io/rating";
 import { Separator } from "@/components/ui/separator";
@@ -10,7 +9,6 @@ import {
   Text,
   Column,
   Container,
-  Padding,
   Row,
   SizedBox,
 } from "@/components/shared/custom_widget";
@@ -18,14 +16,95 @@ import Image from "next/image";
 import { formatRupiah, useNavigator } from "@/utils/helper";
 import { useFavorites } from "@/contexts/favorite-context";
 
-export default function AnimalInfo({ animalId }) {
+function formatValue(value, fallback = "-") {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  return value;
+}
+
+function formatAge(value) {
+  if (value === null || value === undefined || value === "") {
+    return "-";
+  }
+
+  return `${value} Tahun`;
+}
+
+function toSafeNumber(value) {
+  const number = Number(value);
+
+  return Number.isFinite(number) ? number : 0;
+}
+
+function normalizeWhatsappNumber(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+
+  if (!digits) {
+    return "";
+  }
+
+  if (digits.startsWith("0")) {
+    return `62${digits.slice(1)}`;
+  }
+
+  if (digits.startsWith("62")) {
+    return digits;
+  }
+
+  if (digits.startsWith("8")) {
+    return `62${digits}`;
+  }
+
+  return digits;
+}
+
+function resolveAnimalStatus(status) {
+  const normalizedStatus = String(status || "").toLowerCase();
+
+  if (normalizedStatus === "terjual") {
+    return {
+      label: "Sudah di adopsi",
+      className: "text-red-500",
+      isSold: true,
+    };
+  }
+
+  if (normalizedStatus === "tersedia") {
+    return {
+      label: "Belum di adopsi",
+      className: "text-[#27C840]",
+      isSold: false,
+    };
+  }
+
+  return {
+    label: status || "-",
+    className: "text-[#475156]",
+    isSold: false,
+  };
+}
+
+export default function AnimalInfo({ animal, animalId }) {
   const nav = useNavigator();
+  const { isFavorite, isFavoriteUpdating, toggleFavorite } = useFavorites();
+  const currentAnimalId = animal?.id ?? animalId;
+  const fav = currentAnimalId ? isFavorite(currentAnimalId) : false;
+  const isUpdatingFavorite = currentAnimalId
+    ? isFavoriteUpdating(currentAnimalId)
+    : false;
+  const statusInfo = resolveAnimalStatus(animal?.status);
+  const rating = toSafeNumber(animal?.rating);
+  const phoneNumber = normalizeWhatsappNumber(
+    animal?.nomorTelepon || animal?.shelter?.noTelepon
+  );
+  const animalName = formatValue(animal?.nama, "Hewan tanpa nama");
+  const animalType = formatValue(animal?.jenis);
 
-  const [rating, setRating] = useState(4.7);
-  const [discount, setDiscount] = useState(21);
-
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const fav = isFavorite(animalId);
+  if (!animal) {
+    return null;
+  }
 
   return (
     <Column crossAxisAlignment="start" className="w-full">
@@ -35,64 +114,62 @@ export default function AnimalInfo({ animalId }) {
             <RatingButton className="text-yellow-500" key={index} size={15} />
           ))}
         </Rating>
-        <Text className="font-semibold text-xs">{rating} Star Rating</Text>
-        <Text className="font-normal text-[#5F6C72] text-xs">
-          (21,671 User feedback)
+        <Text className="font-semibold text-xs">
+          {rating.toFixed(1)} Star Rating
         </Text>
       </Row>
 
       <SizedBox height={5} />
       <Text className="font-normal mb-2">
-        Ali - Labrador RetrieverMangilao, GU
+        {animalName} - {animalType}
       </Text>
 
       <SizedBox height={5} />
       <div className="w-full grid grid-cols-2 gap-2">
         <div className="flex gap-1">
           <Text className="text-xs">Jenis Kelamin: </Text>
-          <span className="font-semibold text-xs">Jantan</span>
+          <span className="font-semibold text-xs">
+            {formatValue(animal.jenisKelamin)}
+          </span>
         </div>
         <div className="flex gap-1">
-          <Text className="text-xs">Tersedia: </Text>
-          <span className="font-semibold text-xs text-[#27C840]">
-            Belum di adopsi
+          <Text className="text-xs">Status: </Text>
+          <span className={`font-semibold text-xs ${statusInfo.className}`}>
+            {statusInfo.label}
           </span>
         </div>
         <div className="flex gap-1">
           <Text className="text-xs">Umur: </Text>
-          <span className="font-semibold text-xs">2 Tahun</span>
+          <span className="font-semibold text-xs">{formatAge(animal.umur)}</span>
         </div>
         <div className="flex gap-1">
           <Text className="text-xs">Category: </Text>
-          <span className="font-semibold text-xs">Anjing</span>
+          <span className="font-semibold text-xs">{animalType}</span>
         </div>
       </div>
 
       <SizedBox height={15} />
       <Row className="gap-2">
         <Text className="font-semibold text-[#2DA5F3] text-lg">
-          {formatRupiah(2000000 - (2000000 * discount) / 100)}
+          {formatRupiah(toSafeNumber(animal.harga))}
         </Text>
-        {discount != 0 && (
-          <Text className="font-semibold text-[#77878F] text-base line-through">
-            {formatRupiah(2000000)}
-          </Text>
-        )}
-        <Container className="bg-[#EFD33D] px-2 py-1">
-          <Text className="font-semibold text-xs">{discount}% OFF</Text>
-        </Container>
       </Row>
 
       <Separator className="my-5" />
 
       <Button
         onClick={() =>
-          nav.push(`/adopsi/detail_animal/${animalId}/forum_informasi`)
+          nav.push(`/adopsi/detail_animal/${currentAnimalId}/forum_informasi`)
         }
-        className="h-[48px] w-[200px] border-2 border-[#FA8232] bg-white hover:bg-orange-50 cursor-pointer rounded-sm"
+        disabled={statusInfo.isSold}
+        className="h-[48px] w-[200px] border-2 border-[#FA8232] bg-white hover:bg-orange-50 cursor-pointer rounded-sm disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100"
         variant="outline"
       >
-        <Text className="font-bold text-[#FA8232] text-base">
+        <Text
+          className={`font-bold text-base ${
+            statusInfo.isSold ? "text-gray-400" : "text-[#FA8232]"
+          }`}
+        >
           Adopsi sekarang
         </Text>
       </Button>
@@ -100,8 +177,9 @@ export default function AnimalInfo({ animalId }) {
       <Row mainAxisAlignment="between" className="w-full my-4">
         <div className="flex items-center justify-center">
           <Button
-            onClick={() => toggleFavorite(animalId)} // ✅ pakai context
-            className="border-none hover:bg-transparent cursor-pointer"
+            onClick={() => toggleFavorite(currentAnimalId)}
+            disabled={!currentAnimalId || isUpdatingFavorite}
+            className="border-none hover:bg-transparent cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
             variant="ghost"
             aria-label="Add to wishlist"
           >
@@ -113,12 +191,12 @@ export default function AnimalInfo({ animalId }) {
           </Button>
 
           <Text className="font-normal text-[#475156] text-xs">
-            {fav ? "Tersimpan di Favorit" : "Menambahkan ke Favorit"}
+            {fav ? "Tersimpan di Favorit" : "Tambahkan ke Favorit"}
           </Text>
         </div>
         <div
           onClick={() =>
-            nav.push(`/adopsi/detail_animal/${animalId}/review_animal`)
+            nav.push(`/adopsi/detail_animal/${currentAnimalId}/review_animal`)
           }
         >
           <Text className="font-normal text-[#F87537] text-xs cursor-pointer hover:underline">
@@ -129,11 +207,19 @@ export default function AnimalInfo({ animalId }) {
           <Text className="font-normal text-[#475156] text-xs">
             Kontak Penjual
           </Text>
-          <div
+          <button
+            type="button"
             onClick={() => {
-              window.open("https://wa.me/6282170677488", "_blank");
+              if (phoneNumber) {
+                window.open(
+                  `https://wa.me/${phoneNumber}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }
             }}
-            className="flex items-center justify-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+            disabled={!phoneNumber}
+            className="flex items-center justify-center gap-1 cursor-pointer hover:opacity-80 transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Image
               src={IconAssets.waOrangeIcon}
@@ -143,9 +229,9 @@ export default function AnimalInfo({ animalId }) {
               className="object-cover"
             />
             <Text className="font-normal text-[#F87537] text-xs">
-              +6282170677488
+              {phoneNumber ? `+${phoneNumber}` : "Nomor tidak tersedia"}
             </Text>
-          </div>
+          </button>
         </div>
       </Row>
 
