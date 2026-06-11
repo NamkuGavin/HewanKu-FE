@@ -64,19 +64,9 @@ export default function FormLogin() {
         required
       />
 
-      <SizedBox height={20} />
+      <SizedBox height={10} />
 
-      <div className="flex justify-between">
-        <div className="flex items-center gap-3">
-          <Checkbox
-            id="rememberMe"
-            checked={rememberMe}
-            onCheckedChange={(v) => setRememberMe(Boolean(v))}
-            className="cursor-pointer data-[state=checked]:bg-[#FF8D28] data-[state=checked]:border-bg-[#FF8D28]"
-          />
-          <Label htmlFor="rememberMe">Remember Me</Label>
-        </div>
-
+      <div className="flex justify-end">
         <Link
           href="/forgot_pass"
           className="text-base font-[500] cursor-pointer text-[#FF8D28]"

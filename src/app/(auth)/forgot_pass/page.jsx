@@ -96,9 +96,6 @@ export default function ForgotpassPage() {
             {isLoading ? "Sending..." : "Submit"}
           </Button>
         </form>
-
-        <SizedBox height={50} />
-        <SocialLogin />
       </div>
 
       {/* Sisi Kanan */}

@@ -24,8 +24,6 @@ export default function FormRegister() {
     confirmPass: "",
   });
 
-  const [agree, setAgree] = useState(false);
-
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -55,16 +53,13 @@ export default function FormRegister() {
       return;
     }
 
-    if (!agree) {
-      toast.error("Anda harus menyetujui Terms & Privacy Policy");
-      return;
-    }
-
     const payload = {
       email: formData.email,
-      nama: `${formData.firstName} ${formData.lastName}`.trim(),
-      noTelepon: formData.phone,
       password: formData.password,
+      namaDepan: formData.firstName,
+      namaBelakang: formData.lastName,
+      noTelepon: formData.phone,
+      confirmPassword: formData.confirmPass,
     };
 
     const result = await register(payload);
@@ -149,27 +144,6 @@ export default function FormRegister() {
         onChange={handleChange}
         required
       />
-
-      <SizedBox height={15} />
-
-      <div className="flex items-center gap-3">
-        <Checkbox
-          id="agreeTerms"
-          checked={agree}
-          onCheckedChange={(v) => setAgree(Boolean(v))}
-          className="cursor-pointer data-[state=checked]:bg-[#FF8D28]"
-        />
-        <Label htmlFor="agreeTerms" className="text-sm font-[500]">
-          I agree to{" "}
-          <Link href="/terms" className="text-[#FF8D28] hover:underline">
-            Terms
-          </Link>{" "}
-          and{" "}
-          <Link href="/privacy" className="text-[#FF8D28] hover:underline">
-            Privacy Policies
-          </Link>
-        </Label>
-      </div>
 
       <SizedBox height={30} />
 

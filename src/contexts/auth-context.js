@@ -125,7 +125,6 @@ export function AuthProvider({ children }) {
     }
 
     router.replace(LOGIN_PATH);
-    router.refresh();
   };
 
   const handleApiError = async (response, fallbackMessage) => {

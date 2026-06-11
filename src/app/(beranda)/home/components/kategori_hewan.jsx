@@ -32,7 +32,7 @@ export default function KategoriHewan() {
   const isNextDisabled = startIndex + itemsPerPage >= totalItems;
   const visibleCategories = dummyKategoriHewan.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
@@ -91,9 +91,6 @@ export default function KategoriHewan() {
                   <ArrowRight color="#FD7E14" size={15} />
                 </Container>
               </Row>
-              <Text size={12} className="text-gray-500">
-                {category.unit} unit
-              </Text>
             </Padding>
           </div>
         ))}
