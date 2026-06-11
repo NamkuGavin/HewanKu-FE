@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Text,
   Column,
@@ -13,13 +13,29 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { dummyKategoriHewanAdopsi } from "@/data/dummy/data_dummy";
 import Image from "next/image";
 
-export default function AdopsiByKategori() {
+export default function AdopsiByKategori({
+  selectedCategory,
+  onCategoryChange,
+}) {
   const [startIndex, setStartIndex] = useState(0);
-
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
   const itemsPerPage = 6;
   const totalItems = dummyKategoriHewanAdopsi.length;
+
+  useEffect(() => {
+    if (!selectedCategory) {
+      setStartIndex(0);
+      return;
+    }
+
+    const selectedIndex = dummyKategoriHewanAdopsi.findIndex(
+      (category) => category.name === selectedCategory
+    );
+
+    if (selectedIndex >= 0) {
+      setStartIndex(Math.floor(selectedIndex / itemsPerPage) * itemsPerPage);
+    }
+  }, [selectedCategory]);
 
   const handleNext = () => {
     if (startIndex + itemsPerPage < totalItems) {
@@ -31,14 +47,8 @@ export default function AdopsiByKategori() {
     setStartIndex((prev) => Math.max(prev - itemsPerPage, 0));
   };
 
-  const handleCategoryClick = (id) => {
-    setSelectedCategoryIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((itemId) => itemId !== id);
-      } else {
-        return [...prev, id];
-      }
-    });
+  const handleCategoryClick = (name) => {
+    onCategoryChange?.(selectedCategory === name ? null : name);
   };
 
   const isPrevDisabled = startIndex === 0;
@@ -84,12 +94,12 @@ export default function AdopsiByKategori() {
       <SizedBox height={30} />
       <div className="grid grid-cols-6 gap-3 w-full">
         {visibleCategories.map((category) => {
-          const isActive = selectedCategoryIds.includes(category.id);
+          const isActive = selectedCategory === category.name;
 
           return (
             <div
               key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
+              onClick={() => handleCategoryClick(category.name)}
               className="overflow-hidden cursor-pointer flex flex-col items-center transition-all duration-300"
             >
               <Image

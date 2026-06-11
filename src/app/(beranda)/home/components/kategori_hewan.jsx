@@ -12,6 +12,7 @@ import {
 import { dummyKategoriHewan } from "@/data/dummy/data_dummy";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function KategoriHewan() {
   const [startIndex, setStartIndex] = useState(0);
@@ -71,8 +72,9 @@ export default function KategoriHewan() {
       <SizedBox height={25} />
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6 w-full">
         {visibleCategories.map((category) => (
-          <div
+          <Link
             key={category.id}
+            href={`/adopsi?jenis=${encodeURIComponent(category.name)}`}
             className="rounded-lg overflow-hidden shadow-md border border-gray-100 bg-white cursor-pointer hover:shadow-lg transition-shadow duration-200"
           >
             <Image
@@ -92,7 +94,7 @@ export default function KategoriHewan() {
                 </Container>
               </Row>
             </Padding>
-          </div>
+          </Link>
         ))}
       </div>
     </>

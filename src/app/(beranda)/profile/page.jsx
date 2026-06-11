@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { viewProfile } from "@/actions/profile.action";
+import { editProfile, viewProfile } from "@/actions/profile.action";
 import { useApiRequest } from "@/hooks/use-api-request";
 import { isAuthErrorStatus, toStatusCode } from "@/utils/apiStatus";
 import { toast } from "sonner";
@@ -49,6 +49,7 @@ export default function AkunSayaPage() {
   // ====== PROFILE STATE ======
   const [isEditing, setIsEditing] = useState(false);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [isProfileSaving, setIsProfileSaving] = useState(false);
 
   const [profile, setProfile] = useState(defaultProfile);
   const [draft, setDraft] = useState(defaultProfile);
@@ -115,12 +116,47 @@ export default function AkunSayaPage() {
     setIsEditing(false);
   };
 
-  const onSave = (e) => {
+  const onSave = async (e) => {
     e.preventDefault();
 
-    // TODO: nanti kalau sudah ada API, panggil API di sini
-    setProfile(draft);
-    setIsEditing(false);
+    setIsProfileSaving(true);
+
+    try {
+      const res = await run(
+        () =>
+          editProfile({
+            body: {
+              email: draft.email,
+              displayName: draft.displayName,
+              noTelepon: draft.noTelephone,
+            },
+          }),
+        {
+          errorMessage: "Gagal update profile",
+        }
+      );
+
+      if (res?.success === false) {
+        const statusCode = toStatusCode(res);
+
+        if (!isAuthErrorStatus(statusCode)) {
+          toast.error(res?.message || "Gagal update profile");
+        }
+
+        return;
+      }
+
+      const nextProfile = res?.data ? mapProfileResponse(res.data) : draft;
+
+      setProfile(nextProfile);
+      setDraft(nextProfile);
+      setIsEditing(false);
+      toast.success(res?.message || "Profile berhasil diupdate");
+    } catch (error) {
+      toast.error(error?.message || "Gagal update profile");
+    } finally {
+      setIsProfileSaving(false);
+    }
   };
 
   const inputBaseClass =
@@ -147,7 +183,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="displayName"
                     value={draft.displayName}
-                    readOnly={!isEditing || isProfileLoading}
+                    readOnly={!isEditing || isProfileLoading || isProfileSaving}
                     onChange={(e) =>
                       setDraftField("displayName", e.target.value)
                     }
@@ -160,7 +196,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="email"
                     value={draft.email}
-                    readOnly={!isEditing || isProfileLoading}
+                    readOnly={!isEditing || isProfileLoading || isProfileSaving}
                     onChange={(e) => setDraftField("email", e.target.value)}
                     className={`${inputBaseClass} ${readOnlyClass}`}
                   />
@@ -171,7 +207,7 @@ export default function AkunSayaPage() {
                   <Input
                     id="noTelephone"
                     value={draft.noTelephone}
-                    readOnly={!isEditing || isProfileLoading}
+                    readOnly={!isEditing || isProfileLoading || isProfileSaving}
                     onChange={(e) =>
                       setDraftField("noTelephone", e.target.value)
                     }
@@ -196,14 +232,16 @@ export default function AkunSayaPage() {
                 <Row className="gap-3">
                   <Button
                     type="submit"
+                    disabled={isProfileSaving}
                     className="h-[40px] w-1/4 bg-[#FF8D28] hover:bg-[#FBA81F] cursor-pointer rounded-sm"
                   >
-                    Save
+                    {isProfileSaving ? "Saving..." : "Save"}
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
                     onClick={onCancel}
+                    disabled={isProfileSaving}
                     className="h-[40px] rounded-sm"
                   >
                     Cancel

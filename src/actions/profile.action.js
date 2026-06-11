@@ -8,3 +8,11 @@ export async function viewProfile() {
     method: "GET",
   });
 }
+
+export async function editProfile({ body }) {
+  return requestWithAuth({
+    url: "/pengguna/editPengguna",
+    method: "PUT",
+    body,
+  });
+}
