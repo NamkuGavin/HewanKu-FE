@@ -29,8 +29,6 @@ export default function LoginPage() {
         </Text>
         <SizedBox height={30} />
         <FormLogin />
-        <SizedBox height={30} />
-        <SocialLogin />
       </div>
 
       {/* Sisi Kanan */}

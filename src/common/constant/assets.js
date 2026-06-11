@@ -1,4 +1,5 @@
 export const ImageAssets = {
+  aliRole: "/images/ali_role.png",
   logoApp: "/images/hewanku_logo.png",
   loginMockup: "/images/login_mockup.png",
   registerMockup: "/images/register_mockup.png",

@@ -38,8 +38,6 @@ export default function RegisterPage() {
         </Text>
         <SizedBox height={30} />
         <FormRegister />
-        <SizedBox height={30} />
-        <SocialRegister />
       </div>
     </div>
   );

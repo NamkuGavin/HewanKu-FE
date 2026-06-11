@@ -4,7 +4,7 @@ import {
   AUTH_SESSION_COOKIE_NAME,
   AUTH_TOKEN_COOKIE_NAME,
   isTokenExpired,
-} from "./src/utils/authCookies";
+} from "./utils/authCookies";
 
 const AUTH_ROUTES = [
   "/login",
@@ -87,7 +87,7 @@ function isSessionInvalid(session) {
   );
 }
 
-export function middleware(request) {
+export function proxy(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(AUTH_TOKEN_COOKIE_NAME)?.value;
   const session = request.cookies.get(AUTH_SESSION_COOKIE_NAME)?.value;
