@@ -27,19 +27,28 @@ function formatPrice(value) {
   return `Rp${price.toLocaleString("id-ID")}`;
 }
 
+function normalizeText(value) {
+  return typeof value === "string" ? value.trim() : value;
+}
+
+function isAvailableAnimal(animal) {
+  return normalizeText(animal?.status)?.toLowerCase() === "tersedia";
+}
+
 function mapAnimal(animal) {
+  const rawImage = normalizeText(animal.urlFoto);
   const image =
-    typeof animal.urlFoto === "string" && animal.urlFoto.trim()
-      ? animal.urlFoto
+    typeof rawImage === "string" && rawImage
+      ? rawImage
       : ImageAssets.placeholderAnimal;
 
   return {
     id: animal.id,
-    name: animal.nama || "Hewan tanpa nama",
+    name: normalizeText(animal.nama) || "Hewan tanpa nama",
     price: animal.harga,
     image,
-    type: animal.jenis,
-    status: animal.status,
+    type: normalizeText(animal.jenis),
+    status: normalizeText(animal.status),
   };
 }
 
@@ -107,7 +116,9 @@ export default function HewanUnggulan() {
 
         if (response?.success === false) {
           setFeaturedAnimals([]);
-          setErrorMessage(response?.message || "Gagal mengambil hewan unggulan");
+          setErrorMessage(
+            response?.message || "Gagal mengambil hewan unggulan",
+          );
           return;
         }
 
@@ -117,12 +128,7 @@ export default function HewanUnggulan() {
 
         syncFavoriteAnimals(response?.data?.daftarFavorit);
         setFeaturedAnimals(
-          animals
-            .filter(
-              (animal) =>
-                String(animal.status || "").toLowerCase() === "tersedia"
-            )
-            .map(mapAnimal)
+          animals.filter(isAvailableAnimal).map(mapAnimal),
         );
         setStartIndex(0);
       } catch (error) {
@@ -149,7 +155,7 @@ export default function HewanUnggulan() {
   const isNextDisabled = startIndex + ITEMS_PER_PAGE >= featuredAnimals.length;
   const visibleAnimals = featuredAnimals.slice(
     startIndex,
-    startIndex + ITEMS_PER_PAGE
+    startIndex + ITEMS_PER_PAGE,
   );
 
   return (
