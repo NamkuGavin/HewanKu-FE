@@ -4,14 +4,57 @@ import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/utils";
 import { formatRupiah } from "@/utils/helper";
-import { dummyPopularHewan } from "@/data/dummy/data_dummy";
+import { ImageAssets } from "@/common/constant/assets";
+import { viewAnimalsForUser } from "@/actions/animal.action";
+import { useApiRequest } from "@/hooks/use-api-request";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Text,
   Column,
   Container,
   Row,
 } from "@/components/shared/custom_widget";
+
+const POPULAR_LIMIT = 5;
+
+function normalizeText(value) {
+  return typeof value === "string" ? value.trim() : value;
+}
+
+function mapPopularAnimal(animal) {
+  const rawImage = normalizeText(animal.urlFoto);
+
+  return {
+    id: animal.id,
+    name: normalizeText(animal.nama) || "Hewan tanpa nama",
+    price: animal.harga,
+    image:
+      typeof rawImage === "string" && rawImage
+        ? rawImage
+        : ImageAssets.placeholderAnimal,
+  };
+}
+
+function PopularAnimalImage({ src, alt }) {
+  const imageSrc =
+    typeof src === "string" && src.trim() ? src : ImageAssets.placeholderAnimal;
+  const className = "w-1/2 h-15 object-cover rounded-md mr-2";
+
+  if (imageSrc.startsWith("/")) {
+    return (
+      <Image
+        src={imageSrc}
+        alt={alt}
+        width={999999}
+        height={0}
+        className={className}
+      />
+    );
+  }
+
+  return <img src={imageSrc} alt={alt} className={className} />;
+}
 
 const Slider = React.forwardRef(({ className, ...props }, ref) => (
   <SliderPrimitive.Root
@@ -42,12 +85,68 @@ export default function FilterAndPopularAnimal({
   onPriceChange,
   priceRange,
 }) {
+  const { run } = useApiRequest();
   const [value, setValue] = React.useState(priceRange);
+  const [popularAnimals, setPopularAnimals] = React.useState([]);
+  const [isPopularLoading, setIsPopularLoading] = React.useState(true);
+  const [popularErrorMessage, setPopularErrorMessage] = React.useState("");
   const [from, to] = value;
 
   React.useEffect(() => {
     setValue(priceRange);
   }, [priceRange]);
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    const loadPopularAnimals = async () => {
+      setIsPopularLoading(true);
+      setPopularErrorMessage("");
+
+      try {
+        const response = await run(() => viewAnimalsForUser(), {
+          errorMessage: "Gagal mengambil hewan popular",
+        });
+
+        if (ignore) {
+          return;
+        }
+
+        if (response?.success === false) {
+          setPopularAnimals([]);
+          setPopularErrorMessage(
+            response?.message || "Gagal mengambil hewan popular"
+          );
+          return;
+        }
+
+        const animals = Array.isArray(response?.data?.hewanUnggulan)
+          ? response.data.hewanUnggulan
+          : [];
+
+        setPopularAnimals(
+          animals.slice(0, POPULAR_LIMIT).map(mapPopularAnimal)
+        );
+      } catch (error) {
+        if (!ignore) {
+          setPopularAnimals([]);
+          setPopularErrorMessage(
+            error?.message || "Gagal mengambil hewan popular"
+          );
+        }
+      } finally {
+        if (!ignore) {
+          setIsPopularLoading(false);
+        }
+      }
+    };
+
+    loadPopularAnimals();
+
+    return () => {
+      ignore = true;
+    };
+  }, [run]);
 
   return (
     <Column className="w-1/4" crossAxisAlignment="start">
@@ -87,26 +186,36 @@ export default function FilterAndPopularAnimal({
       </Column>
       <Text className="font-semibold mt-8 mb-4">Hewan Popular</Text>
       <div className="w-full grid grid-cols-1 gap-4">
-        {dummyPopularHewan.map((animal, index) => (
-          <Container key={animal.id} className="overflow-hidden cursor-pointer">
-            <Row>
-              <Image
-                src={animal.image}
-                alt={animal.name}
-                width={999999}
-                height={0}
-                className="w-1/2 h-15 object-cover rounded-md mr-2"
-              />
-              <Column crossAxisAlignment="start">
-                <Text size={12} className="font-semibold">
-                  {animal.name}
-                </Text>
-                <Text size={12} className="font-semibold">
-                  Rp{animal.price.toLocaleString("id-ID")}
-                </Text>
-              </Column>
-            </Row>
-          </Container>
+        {isPopularLoading ? (
+          <Text className="text-xs text-gray-500">Memuat hewan popular...</Text>
+        ) : null}
+
+        {!isPopularLoading && popularErrorMessage ? (
+          <Text className="text-xs text-red-500">{popularErrorMessage}</Text>
+        ) : null}
+
+        {!isPopularLoading &&
+        !popularErrorMessage &&
+        popularAnimals.length === 0 ? (
+          <Text className="text-xs text-gray-500">Belum ada hewan popular.</Text>
+        ) : null}
+
+        {popularAnimals.map((animal) => (
+          <Link key={animal.id} href={`/adopsi/detail_animal/${animal.id}`}>
+            <Container className="overflow-hidden cursor-pointer">
+              <Row>
+                <PopularAnimalImage src={animal.image} alt={animal.name} />
+                <Column crossAxisAlignment="start">
+                  <Text size={12} className="font-semibold">
+                    {animal.name}
+                  </Text>
+                  <Text size={12} className="font-semibold">
+                    {formatRupiah(Number(animal.price || 0))}
+                  </Text>
+                </Column>
+              </Row>
+            </Container>
+          </Link>
         ))}
       </div>
     </Column>
