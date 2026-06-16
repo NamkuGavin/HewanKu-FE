@@ -155,7 +155,7 @@ function StatusFormDetail({ order }) {
   );
 }
 
-export default function StatusFormView() {
+function StatusFormContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const { run } = useApiRequest();
@@ -242,5 +242,19 @@ export default function StatusFormView() {
       </Text>
       <OrdersTable orders={orders} />
     </div>
+  );
+}
+
+export default function StatusFormView() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="p-6">
+          <Text className="text-gray-500">Memuat pesanan...</Text>
+        </div>
+      }
+    >
+      <StatusFormContent />
+    </React.Suspense>
   );
 }

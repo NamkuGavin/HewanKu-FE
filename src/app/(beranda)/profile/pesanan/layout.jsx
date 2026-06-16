@@ -12,7 +12,7 @@ import {
   isAcceptedForm,
 } from "./components/order_progress_utils";
 
-export default function TrackPesananLayout({ children }) {
+function TrackPesananContent({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -138,5 +138,19 @@ export default function TrackPesananLayout({ children }) {
 
       <div className="w-full">{children}</div>
     </Container>
+  );
+}
+
+export default function TrackPesananLayout({ children }) {
+  return (
+    <React.Suspense
+      fallback={
+        <Container className="bg-white border border-gray-200 rounded-lg p-6">
+          Memuat pesanan...
+        </Container>
+      }
+    >
+      <TrackPesananContent>{children}</TrackPesananContent>
+    </React.Suspense>
   );
 }

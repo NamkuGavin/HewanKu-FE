@@ -128,7 +128,7 @@ function StatusPembayaranDetail({
   );
 }
 
-export default function StatusPembayaranPage() {
+function StatusPembayaranContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
@@ -290,5 +290,19 @@ export default function StatusPembayaranPage() {
         setNow(Date.now());
       }}
     />
+  );
+}
+
+export default function StatusPembayaranPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="p-6">
+          <Text className="text-gray-500">Memuat status pembayaran...</Text>
+        </div>
+      }
+    >
+      <StatusPembayaranContent />
+    </React.Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { IconAssets, ImageAssets } from "@/common/constant/assets";
@@ -11,7 +11,7 @@ import { useNavigator } from "@/utils/helper";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 
-export default function SetnewpassPage() {
+function SetnewpassContent() {
   const nav = useNavigator();
   const { changePass, isLoading } = useAuth();
   const searchParams = useSearchParams();
@@ -136,5 +136,13 @@ export default function SetnewpassPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function SetnewpassPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <SetnewpassContent />
+    </Suspense>
   );
 }
