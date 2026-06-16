@@ -34,6 +34,7 @@ export const ImageAssets = {
   rakaBlur: "/images/raka_blur.png",
   placeholderAnimal: "/images/placeholder_animal.png",
   zuhriProfile: "/images/zuhri_profile.png",
+  zuhriProfile2: "/images/zuhri_profile2.jpeg",
   gavinProfile: "/images/gavin_profile.png",
   aliProfile: "/images/ali_profile_new.png",
   rakaProfile: "/images/raka_profile.png",

@@ -31,7 +31,7 @@ export default function OurTeamSection() {
             Muhammad Gavin Arasyi
           </Text>
           <Text size={15} className="font-semibold text-left text-stone-500">
-            Front End Developer
+            FrontEnd Mobile + Web
           </Text>
         </Column>
         <Column crossAxisAlignment="center" mainAxisAlignment="center">
@@ -47,7 +47,7 @@ export default function OurTeamSection() {
             Ali Luqmanul Hakim
           </Text>
           <Text size={15} className="font-semibold text-left text-stone-500">
-            Quality Assurance
+            Quality Assurance - UI/UX
           </Text>
         </Column>
         <Column crossAxisAlignment="center" mainAxisAlignment="center">
@@ -63,7 +63,58 @@ export default function OurTeamSection() {
             Redemtus De Ferento Raka
           </Text>
           <Text size={15} className="font-semibold text-left text-stone-500">
-            Back End Developer
+            BackEnd Developer
+          </Text>
+        </Column>
+      </Row>
+      <SizedBox height={50} />
+      <Row mainAxisAlignment="between">
+        <Column crossAxisAlignment="center" mainAxisAlignment="center">
+          <Image
+            src={ImageAssets.zuhriProfile2}
+            alt="gavinProfile"
+            width={350}
+            height={350}
+            className="h-88 rounded-2xl object-cover"
+          />
+          <SizedBox height={15} />
+          <Text size={20} className="font-semibold text-left">
+            Zuhri Pratisto Basuki
+          </Text>
+          <Text size={15} className="font-semibold text-left text-stone-500">
+            PM - UI/UX - FrontEnd Mobile
+          </Text>
+        </Column>
+        <Column crossAxisAlignment="center" mainAxisAlignment="center">
+          <Image
+            src={ImageAssets.aliRole}
+            alt="aliProfile"
+            width={350}
+            height={350}
+            className="h-88 rounded-2xl object-cover"
+          />
+          <SizedBox height={15} />
+          <Text size={20} className="font-semibold text-center">
+            Abdullah Al Arifi
+          </Text>
+          <Text size={15} className="font-semibold text-left text-stone-500">
+            FrontEnd Web
+          </Text>
+        </Column>
+        <Column crossAxisAlignment="center" mainAxisAlignment="center">
+          <Image
+            src={ImageAssets.aliRole}
+            alt="rakaProfile"
+            width={350}
+            height={350}
+            className="rounded-2xl object-cover"
+          />
+          <SizedBox height={15} />
+          <Text size={20} className="font-semibold text-center">
+            Riyan Permana Purba
+          </Text>
+          <Text size={15} className="font-semibold text-left text-stone-500">
+            FrontEnd Mobile - UI/UX
           </Text>
         </Column>
       </Row>
