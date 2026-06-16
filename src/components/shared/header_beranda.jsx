@@ -9,7 +9,7 @@ import * as React from "react";
 import { ImageAssets } from "@/common/constant/assets";
 import { Row, Container } from "@/components/shared/custom_widget";
 
-export default function HeaderBeranda() {
+function HeaderBerandaContent() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -137,5 +137,13 @@ export default function HeaderBeranda() {
         </Row>
       </Row>
     </Container>
+  );
+}
+
+export default function HeaderBeranda() {
+  return (
+    <React.Suspense fallback={null}>
+      <HeaderBerandaContent />
+    </React.Suspense>
   );
 }

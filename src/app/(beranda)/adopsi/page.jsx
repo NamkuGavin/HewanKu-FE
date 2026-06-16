@@ -16,7 +16,7 @@ import SearchResultsAdopsi from "./components/search_results_adopsi";
 
 const DEFAULT_PRICE_RANGE = [0, 9000000];
 
-export default function AdopsiPage() {
+function AdopsiContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") ?? "";
@@ -112,5 +112,13 @@ export default function AdopsiPage() {
         </Container>
       </Container>
     </>
+  );
+}
+
+export default function AdopsiPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <AdopsiContent />
+    </React.Suspense>
   );
 }

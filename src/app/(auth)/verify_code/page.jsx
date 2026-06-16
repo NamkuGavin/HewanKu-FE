@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -12,7 +12,7 @@ import { useNavigator } from "@/utils/helper";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 
-export default function VerifycodePage() {
+function VerifycodeContent() {
   const nav = useNavigator();
   const { verifyOTP, forgotPassword, isLoading } = useAuth();
   const searchParams = useSearchParams();
@@ -157,5 +157,13 @@ export default function VerifycodePage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function VerifycodePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <VerifycodeContent />
+    </Suspense>
   );
 }
