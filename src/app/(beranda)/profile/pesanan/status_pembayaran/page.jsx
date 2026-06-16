@@ -1,285 +1,294 @@
 "use client";
 
-import React, { useEffect } from "react";
-import {
-  Check,
-  X,
-  FileText,
-  Handshake,
-  Truck,
-  Package,
-  Clock,
-} from "lucide-react";
-import {
-  Text,
-  Row,
-  Container,
-  Column,
-  Padding,
-} from "@/components/shared/custom_widget";
-import { Card, CardContent } from "@/components/ui/card";
+import * as React from "react";
+import { CreditCard, Handshake, Star } from "lucide-react";
+import { Text } from "@/components/shared/custom_widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useRouter } from "next/navigation";
-import { dummyOrderData } from "@/data/dummy/data_dummy";
+import { Button } from "@/components/ui/button";
+import { useRouter, useSearchParams } from "next/navigation";
+import { viewUserOrders } from "@/actions/order.action";
+import { useApiRequest } from "@/hooks/use-api-request";
+import { toast } from "sonner";
+import {
+  buildPaymentActivities,
+  clearPaymentTimer,
+  findOrderById,
+  formatPaymentCountdown,
+  getPaymentDeadline,
+  getPaymentStepStatus,
+  isAcceptedForm,
+  isFailedPayment,
+  isPendingPayment,
+  isSuccessfulPayment,
+  resolvePaymentUrl,
+  startPaymentTimer,
+  withLocalPaymentExpiry,
+} from "../components/order_progress_utils";
+import {
+  ProgressContentShell,
+  ProgressSteps,
+} from "../components/order_progress_components";
+
+function PaymentAction({ order, isExpired, onStartPayment }) {
+  const paymentUrl = resolvePaymentUrl(order);
+
+  if (
+    !isAcceptedForm(order?.status) ||
+    isSuccessfulPayment(order?.statusPembayaran) ||
+    isFailedPayment(order?.statusPembayaran)
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="mt-8 flex justify-center">
+      <Button
+        type="button"
+        className="rounded-full px-12 bg-orange-500 hover:bg-orange-600 cursor-pointer"
+        onClick={() => {
+          if (!paymentUrl) {
+            toast.error("Link pembayaran belum tersedia.");
+            return;
+          }
+
+          if (isExpired) {
+            toast.error("Waktu pembayaran sudah habis.");
+            return;
+          }
+
+          onStartPayment();
+          window.open(paymentUrl, "_blank", "noopener,noreferrer");
+        }}
+      >
+        Lanjutkan Pembayaran
+      </Button>
+    </div>
+  );
+}
+
+function StatusPembayaranDetail({
+  order,
+  isExpired,
+  onStartPayment,
+  timeLeftText,
+}) {
+  const paymentSteps = [
+    { id: "silahkan_bayar", label: "Silahkan membayar", icon: CreditCard },
+    { id: "pembayaran_berhasil", label: "Pembayaran Berhasil", icon: Handshake },
+    { id: "beri_ulasan", label: "Beri ulasan di Pesanan Terakhir", icon: Star },
+  ];
+
+  return (
+    <ProgressContentShell
+      order={order}
+      activities={buildPaymentActivities(order)}
+    >
+      {!isAcceptedForm(order?.status) ? (
+        <Alert className="mb-6">
+          <AlertDescription>
+            Pembayaran belum bisa dibuka sampai form diterima oleh shelter.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {isFailedPayment(order?.statusPembayaran) ? (
+        <Alert variant="destructive" className="mb-6">
+          <AlertDescription>
+            Pembayaran gagal diproses. Silakan lakukan pembayaran ulang atau
+            hubungi shelter.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {isPendingPayment(order?.statusPembayaran) ? (
+        <Alert className="mb-6">
+          <AlertDescription>
+            Silakan lanjutkan pembayaran melalui Midtrans. Status akan berubah
+            otomatis setelah pembayaran berhasil dikonfirmasi.
+            {timeLeftText ? (
+              <span className="mt-2 block font-semibold text-orange-600">
+                Sisa waktu pembayaran: {timeLeftText}
+              </span>
+            ) : null}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      <ProgressSteps
+        steps={paymentSteps}
+        getStatus={(stepId) => getPaymentStepStatus(order, stepId)}
+      />
+
+      <PaymentAction
+        order={order}
+        isExpired={isExpired}
+        onStartPayment={onStartPayment}
+      />
+    </ProgressContentShell>
+  );
+}
 
 export default function StatusPembayaranPage() {
   const router = useRouter();
-  const orderData = dummyOrderData;
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
+  const { run } = useApiRequest();
+  const [orders, setOrders] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [now, setNow] = React.useState(Date.now());
 
-  useEffect(() => {
-    if (!orderData.isPaymentAccessible) {
-      router.replace("/profile/pesanan/status_form");
+  const loadOrders = React.useCallback(
+    async ({ silent = false } = {}) => {
+      if (!silent) {
+        setIsLoading(true);
+        setErrorMessage("");
+      }
+
+      try {
+        const response = await run(() => viewUserOrders(), {
+          errorMessage: "Gagal mengambil status pembayaran",
+        });
+
+        if (response?.success === false) {
+          setOrders([]);
+          setErrorMessage(
+            response?.message || "Gagal mengambil status pembayaran"
+          );
+          return;
+        }
+
+        setOrders(Array.isArray(response?.data) ? response.data : []);
+      } catch (error) {
+        setOrders([]);
+        setErrorMessage(error?.message || "Gagal mengambil status pembayaran");
+      } finally {
+        if (!silent) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [run]
+  );
+
+  React.useEffect(() => {
+    let ignore = false;
+
+    const load = async () => {
+      await loadOrders();
+
+      if (!ignore) {
+        setNow(Date.now());
+      }
+    };
+
+    load();
+
+    return () => {
+      ignore = true;
+    };
+  }, [loadOrders]);
+
+  const selectedOrder = orderId ? findOrderById(orders, orderId) : null;
+  const displayedOrder = withLocalPaymentExpiry(selectedOrder, now);
+  const paymentDeadline = selectedOrder?.id
+    ? getPaymentDeadline(selectedOrder.id)
+    : null;
+  const timeLeftMs = paymentDeadline ? paymentDeadline - now : 0;
+  const isExpired =
+    Boolean(displayedOrder) && isFailedPayment(displayedOrder?.statusPembayaran);
+  const timeLeftText =
+    paymentDeadline &&
+    isAcceptedForm(displayedOrder?.status) &&
+    isPendingPayment(displayedOrder?.statusPembayaran)
+      ? formatPaymentCountdown(timeLeftMs)
+      : "";
+
+  React.useEffect(() => {
+    if (!selectedOrder?.id) {
+      return;
     }
-  }, [orderData, router]);
 
-  if (!orderData.isPaymentAccessible) return null;
+    if (
+      isSuccessfulPayment(selectedOrder.statusPembayaran) ||
+      isFailedPayment(selectedOrder.statusPembayaran)
+    ) {
+      clearPaymentTimer(selectedOrder.id);
+    }
+  }, [selectedOrder]);
 
-  const paymentSteps = [
-    { id: "silahkan_bayar", label: "Silahkan membayar", icon: FileText },
-    { id: "proses", label: "Pembayaran Sedang di Proses", icon: Truck },
-    { id: "berhasil", label: "Pembayaran Berhasil", icon: Handshake },
-    { id: "chat", label: "Chat Penjual", icon: Package },
-  ];
-
-  const getPaymentStepStatus = (stepId, index) => {
-    if (orderData.formStatus !== "approved") return "disabled";
-
-    if (orderData.paymentStatus === "failed" && stepId === "proses") {
-      return "rejected";
+  React.useEffect(() => {
+    if (
+      !selectedOrder?.id ||
+      !isAcceptedForm(selectedOrder.status) ||
+      !isPendingPayment(selectedOrder.statusPembayaran) ||
+      !getPaymentDeadline(selectedOrder.id)
+    ) {
+      return;
     }
 
-    if (orderData.paymentStatus === "processing") {
-      if (index <= 1) return "completed";
-      if (index === 2) return "current";
-      return "pending";
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    const polling = window.setInterval(() => {
+      loadOrders({ silent: true });
+    }, 15000);
+
+    return () => {
+      window.clearInterval(timer);
+      window.clearInterval(polling);
+    };
+  }, [selectedOrder, loadOrders]);
+
+  React.useEffect(() => {
+    if (!isLoading && selectedOrder && !isAcceptedForm(selectedOrder.status)) {
+      router.replace(`/profile/pesanan/status_form?orderId=${selectedOrder.id}`);
     }
+  }, [isLoading, selectedOrder, router]);
 
-    if (orderData.paymentStatus === "success") {
-      return "completed";
-    }
-
-    if (index === 0) return "current";
-    return "pending";
-  };
-
-  const StepIcon = ({ status }) => {
-    const circleClasses =
-      "w-6 h-6 rounded-full flex items-center justify-center transition-all";
-
-    if (status === "completed") {
-      return (
-        <div className={`${circleClasses} bg-orange-500 text-white`}>
-          <Check className="w-4 h-4" strokeWidth={3} />
-        </div>
-      );
-    }
-
-    if (status === "rejected") {
-      return (
-        <div className={`${circleClasses} bg-red-500 text-white`}>
-          <X className="w-4 h-4" strokeWidth={3} />
-        </div>
-      );
-    }
-
-    if (status === "current") {
-      return (
-        <div className={`${circleClasses} bg-orange-500 text-white`}>
-          <div className="w-5 h-5 rounded-full bg-white" />
-        </div>
-      );
-    }
-
+  if (isLoading) {
     return (
-      <div className={`${circleClasses} bg-white border-2 border-gray-300`}>
-        <div className="w-3 h-3 rounded-full bg-gray-300" />
+      <div className="p-6">
+        <Text className="text-gray-500">Memuat status pembayaran...</Text>
       </div>
     );
-  };
+  }
+
+  if (errorMessage) {
+    return (
+      <div className="p-6">
+        <Text className="text-sm text-red-500">{errorMessage}</Text>
+      </div>
+    );
+  }
+
+  if (!orderId) {
+    return (
+      <div className="p-6">
+        <Text className="text-gray-500">
+          Pilih pesanan dari tabel Status Form terlebih dahulu.
+        </Text>
+      </div>
+    );
+  }
+
+  if (!selectedOrder) {
+    return (
+      <div className="p-6">
+        <Text className="text-gray-500">Pesanan tidak ditemukan.</Text>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <Padding horizontal={25} top={25}>
-        <Card className="bg-yellow-50 border-yellow-200 rounded-none mb-4">
-          <CardContent>
-            <Row mainAxisAlignment="between">
-              <Column crossAxisAlignment="start">
-                <Text className="text-xl font-medium mb-2">
-                  {orderData.orderId}
-                </Text>
-                <Text className="text-sm text-gray-600 font-normal">
-                  {orderData.animalCount} · {orderData.estimatedTime}
-                </Text>
-              </Column>
-              <Text className="text-xl font-semibold text-[#2DA5F3]">
-                {orderData.price}
-              </Text>
-            </Row>
-          </CardContent>
-        </Card>
-
-        <div className="mb-8">
-          <Text className="text-sm mb-8">
-            Perkiraan kedatangan pesanan {orderData.orderDate}
-          </Text>
-
-          {orderData.paymentStatus === "failed" && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Pembayaran gagal diproses. Silakan hubungi penjual atau coba
-                lakukan pembayaran ulang.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="relative">
-            <div className="flex items-start justify-between">
-              {paymentSteps.map((step, index) => {
-                const status = getPaymentStepStatus(step.id, index);
-                const StepIconComponent = step.icon;
-
-                return (
-                  <div
-                    key={step.id}
-                    className="flex flex-col items-center flex-1"
-                  >
-                    {/* Circle + garis */}
-                    <div className="relative flex items-center w-full">
-                      {index > 0 && (
-                        <div
-                          className={`absolute top-1/2 -translate-y-1/2 h-2 w-full ${
-                            getPaymentStepStatus(
-                              paymentSteps[index - 1].id,
-                              index - 1
-                            ) === "completed" && status !== "pending"
-                              ? "bg-orange-500"
-                              : getPaymentStepStatus(
-                                  paymentSteps[index - 1].id,
-                                  index - 1
-                                ) === "rejected"
-                              ? "bg-red-500"
-                              : "bg-gray-200"
-                          }`}
-                          style={{ right: "50%" }}
-                        />
-                      )}
-
-                      <div className="relative z-10 mx-auto">
-                        <StepIcon status={status} />
-                      </div>
-
-                      {index < paymentSteps.length - 1 && (
-                        <div
-                          className={`absolute top-1/2 -translate-y-1/2 h-2 w-full ${
-                            status === "completed"
-                              ? "bg-orange-500"
-                              : status === "rejected"
-                              ? "bg-red-500"
-                              : "bg-gray-200"
-                          }`}
-                          style={{ left: "50%" }}
-                        />
-                      )}
-                    </div>
-
-                    {/* Icon kecil bawah */}
-                    <div
-                      className={`mt-4 p-2 rounded-lg ${
-                        status === "completed"
-                          ? "bg-green-50"
-                          : status === "current"
-                          ? "bg-orange-50"
-                          : status === "rejected"
-                          ? "bg-red-50"
-                          : "bg-gray-50"
-                      }`}
-                    >
-                      <StepIconComponent
-                        className={`w-5 h-5 ${
-                          status === "completed"
-                            ? "text-green-500"
-                            : status === "current"
-                            ? "text-orange-500"
-                            : status === "rejected"
-                            ? "text-red-500"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    </div>
-
-                    {/* Label */}
-                    <div className="text-center mt-4">
-                      <p
-                        className={`text-xs text-center mt-1 max-w-[140px] ${
-                          status === "completed" || status === "current"
-                            ? "text-gray-900 font-medium"
-                            : status === "rejected"
-                            ? "text-red-600 font-medium"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        {step.label}
-                      </p>
-
-                      {/* tampilkan nomor telp kalau step chat sudah aktif */}
-                      {step.id === "chat" &&
-                        status !== "pending" &&
-                        status !== "disabled" && (
-                          <p className="text-xs text-orange-500 mt-1 flex items-center justify-center gap-1">
-                            <span>📞</span>{" "}
-                            {orderData.activities.payment.find((a) => a.phone)
-                              ?.phone ?? "+62xxxx"}
-                          </p>
-                        )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </Padding>
-
-      <Container className="border-t p-5">
-        <Text className="text-lg font-medium mb-4">Order Activity</Text>
-        <div className="space-y-4">
-          {orderData.activities.payment.map((activity, index) => (
-            <div key={index} className="flex gap-4">
-              <div
-                className={`w-11 h-11 rounded flex items-center justify-center flex-shrink-0 ${
-                  activity.status === "completed"
-                    ? "bg-green-100"
-                    : activity.status === "warning"
-                    ? "bg-blue-100"
-                    : "bg-gray-100"
-                }`}
-              >
-                {activity.status === "completed" ? (
-                  <Check className="w-5 h-5 text-green-600" />
-                ) : activity.status === "warning" ? (
-                  <FileText className="w-5 h-5 text-blue-600" />
-                ) : (
-                  <Clock className="w-5 h-5 text-gray-600" />
-                )}
-              </div>
-
-              <div className="flex-1">
-                <Text className="text-sm font-normal">
-                  {activity.title}
-                  {activity.note && (
-                    <span className="ml-2 text-orange-500 text-sm">
-                      {activity.note}
-                    </span>
-                  )}
-                </Text>
-                <Text className="text-sm font-normal text-[#77878F]">
-                  {activity.date}
-                </Text>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </>
+    <StatusPembayaranDetail
+      order={displayedOrder}
+      isExpired={isExpired}
+      timeLeftText={timeLeftText}
+      onStartPayment={() => {
+        startPaymentTimer(displayedOrder.id);
+        setNow(Date.now());
+      }}
+    />
   );
 }

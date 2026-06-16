@@ -2,16 +2,16 @@
 
 import { requestWithAuth } from "@/actions/auth.action";
 
-export async function viewUserOrders() {
+export async function getAnimalReviews(id) {
   return requestWithAuth({
-    url: "/pesanan/pengguna/view",
+    url: `/ulasan/${id}`,
     method: "GET",
   });
 }
 
-export async function createOrder({ animalId, body }) {
+export async function createAnimalReview({ animalId, body }) {
   return requestWithAuth({
-    url: `/pesanan/${animalId}/create`,
+    url: `/ulasan/${animalId}/create`,
     method: "POST",
     body,
   });
