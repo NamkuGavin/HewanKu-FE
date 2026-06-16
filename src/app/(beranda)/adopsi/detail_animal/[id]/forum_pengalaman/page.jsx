@@ -10,6 +10,7 @@ import { Container } from "@/components/shared/custom_widget";
 import { useNavigator } from "@/utils/helper";
 import { useParams } from "next/navigation";
 import { createOrder } from "@/actions/order.action";
+import { getAnimalById } from "@/actions/animal.action";
 import { useApiRequest } from "@/hooks/use-api-request";
 import { toast } from "sonner";
 
@@ -61,6 +62,10 @@ function normalizeText(value) {
   return String(value || "").trim();
 }
 
+function isSoldAnimal(status) {
+  return normalizeText(status).toLowerCase() === "terjual";
+}
+
 export default function ForumPengalaman() {
   const nav = useNavigator();
   const { run } = useApiRequest();
@@ -68,6 +73,50 @@ export default function ForumPengalaman() {
   const [personalForm, setPersonalForm] = useState(null);
   const [form, setForm] = useState(defaultExperienceForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingAnimal, setIsCheckingAnimal] = useState(true);
+  const [isAnimalSold, setIsAnimalSold] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const checkAnimal = async () => {
+      setIsCheckingAnimal(true);
+
+      try {
+        const response = await run(() => getAnimalById(animalId), {
+          errorMessage: "Gagal mengecek status hewan",
+        });
+        const sold = isSoldAnimal(response?.data?.status);
+
+        if (ignore) {
+          return;
+        }
+
+        setIsAnimalSold(sold);
+
+        if (sold) {
+          toast.error("Hewan ini sudah diadopsi dan tidak bisa dipesan.");
+          nav.replace(`/adopsi/detail_animal/${animalId}`);
+        }
+      } catch (error) {
+        if (!ignore) {
+          toast.error(error?.message || "Gagal mengecek status hewan");
+        }
+      } finally {
+        if (!ignore) {
+          setIsCheckingAnimal(false);
+        }
+      }
+    };
+
+    if (animalId) {
+      checkAnimal();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [animalId, run]);
 
   useEffect(() => {
     const savedForm = window.sessionStorage.getItem(getStorageKey(animalId));
@@ -101,6 +150,12 @@ export default function ForumPengalaman() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isAnimalSold) {
+      toast.error("Hewan ini sudah diadopsi dan tidak bisa dipesan.");
+      nav.replace(`/adopsi/detail_animal/${animalId}`);
+      return;
+    }
 
     if (!personalForm || hasEmptyRequiredField(personalForm, stageARequiredFields)) {
       toast.error("Lengkapi informasi pribadi terlebih dahulu.");
@@ -350,10 +405,14 @@ export default function ForumPengalaman() {
 
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isCheckingAnimal || isAnimalSold}
                 className="rounded-full px-20 bg-orange-500 hover:bg-orange-600 cursor-pointer disabled:opacity-60"
               >
-                {isSubmitting ? "Mengirim..." : "Kirim Form"}
+                {isCheckingAnimal
+                  ? "Mengecek..."
+                  : isSubmitting
+                    ? "Mengirim..."
+                    : "Kirim Form"}
               </Button>
             </div>
           </form>

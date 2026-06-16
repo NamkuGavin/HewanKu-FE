@@ -9,7 +9,6 @@ import {
 } from "@/components/shared/custom_widget";
 import HeroSectionBeranda from "@/components/shared/hero_section_beranda";
 import About from "./components/about";
-import FounderSection from "./components/founder_section";
 import OurTeamSection from "./components/our_team_section";
 
 export default function AboutUsPage() {
@@ -26,8 +25,6 @@ export default function AboutUsPage() {
             className="pt-8 pb-25"
           >
             <About />
-            <SizedBox height={75} />
-            <FounderSection />
             <SizedBox height={75} />
             <OurTeamSection />
           </Column>

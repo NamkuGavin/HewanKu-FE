@@ -14,6 +14,7 @@ import { ImageAssets } from "@/common/constant/assets";
 import { viewAnimalsForUser } from "@/actions/animal.action";
 import { useApiRequest } from "@/hooks/use-api-request";
 import { useFavorites } from "@/contexts/favorite-context";
+import { useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -76,6 +77,7 @@ function AnimalImage({ src, alt }) {
 }
 
 export default function HewanUnggulan() {
+  const router = useRouter();
   const { run } = useApiRequest();
   const {
     isFavorite,
@@ -96,6 +98,12 @@ export default function HewanUnggulan() {
 
   const handlePrev = () => {
     setStartIndex((prev) => Math.max(prev - ITEMS_PER_PAGE, 0));
+  };
+
+  const openAnimalDetail = (animalId) => {
+    if (animalId) {
+      router.push(`/adopsi/detail_animal/${animalId}`);
+    }
   };
 
   useEffect(() => {
@@ -127,9 +135,7 @@ export default function HewanUnggulan() {
           : [];
 
         syncFavoriteAnimals(response?.data?.daftarFavorit);
-        setFeaturedAnimals(
-          animals.filter(isAvailableAnimal).map(mapAnimal),
-        );
+        setFeaturedAnimals(animals.filter(isAvailableAnimal).map(mapAnimal));
         setStartIndex(0);
       } catch (error) {
         if (!ignore) {
@@ -215,6 +221,15 @@ export default function HewanUnggulan() {
           {visibleAnimals.map((animal) => (
             <div
               key={animal.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => openAnimalDetail(animal.id)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  openAnimalDetail(animal.id);
+                }
+              }}
               className="rounded-lg overflow-hidden shadow-md border border-gray-100 bg-white cursor-pointer hover:shadow-lg transition-shadow duration-200"
             >
               <AnimalImage src={animal.image} alt={animal.name} />
@@ -229,7 +244,10 @@ export default function HewanUnggulan() {
                     </Text>
                   </div>
                   <Button
-                    onClick={() => toggleFavorite(animal.id)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      toggleFavorite(animal.id);
+                    }}
                     disabled={isFavoriteUpdating(animal.id)}
                     className="bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-200 cursor-pointer disabled:opacity-60"
                     aria-label="favorite"

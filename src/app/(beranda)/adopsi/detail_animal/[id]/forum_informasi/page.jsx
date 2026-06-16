@@ -17,6 +17,8 @@ import { Container } from "@/components/shared/custom_widget";
 import { useNavigator } from "@/utils/helper";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { getAnimalById } from "@/actions/animal.action";
+import { useApiRequest } from "@/hooks/use-api-request";
 
 const defaultForm = {
   namaDepan: "",
@@ -57,11 +59,60 @@ function hasEmptyRequiredField(form) {
   return requiredFields.some((field) => !String(form[field] || "").trim());
 }
 
+function isSoldAnimal(status) {
+  return String(status || "").trim().toLowerCase() === "terjual";
+}
+
 export default function ForumInformasi() {
   const nav = useNavigator();
+  const { run } = useApiRequest();
   const params = useParams();
   const animalId = params.id;
   const [form, setForm] = useState(defaultForm);
+  const [isCheckingAnimal, setIsCheckingAnimal] = useState(true);
+  const [isAnimalSold, setIsAnimalSold] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const checkAnimal = async () => {
+      setIsCheckingAnimal(true);
+
+      try {
+        const response = await run(() => getAnimalById(animalId), {
+          errorMessage: "Gagal mengecek status hewan",
+        });
+        const sold = isSoldAnimal(response?.data?.status);
+
+        if (ignore) {
+          return;
+        }
+
+        setIsAnimalSold(sold);
+
+        if (sold) {
+          toast.error("Hewan ini sudah diadopsi dan tidak bisa dipesan.");
+          nav.replace(`/adopsi/detail_animal/${animalId}`);
+        }
+      } catch (error) {
+        if (!ignore) {
+          toast.error(error?.message || "Gagal mengecek status hewan");
+        }
+      } finally {
+        if (!ignore) {
+          setIsCheckingAnimal(false);
+        }
+      }
+    };
+
+    if (animalId) {
+      checkAnimal();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [animalId, run]);
 
   useEffect(() => {
     const savedForm = window.sessionStorage.getItem(getStorageKey(animalId));
@@ -84,6 +135,12 @@ export default function ForumInformasi() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (isAnimalSold) {
+      toast.error("Hewan ini sudah diadopsi dan tidak bisa dipesan.");
+      nav.replace(`/adopsi/detail_animal/${animalId}`);
+      return;
+    }
 
     if (hasEmptyRequiredField(form)) {
       toast.error("Semua data informasi pribadi wajib diisi.");
@@ -285,9 +342,10 @@ export default function ForumInformasi() {
               </Button>
               <Button
                 type="submit"
+                disabled={isCheckingAnimal || isAnimalSold}
                 className="rounded-full px-20 bg-orange-500 hover:bg-orange-600 cursor-pointer"
               >
-                Lanjutkan
+                {isCheckingAnimal ? "Mengecek..." : "Lanjutkan"}
               </Button>
             </div>
           </form>

@@ -21,7 +21,7 @@ function formatValue(value, fallback = "-") {
     return fallback;
   }
 
-  return value;
+  return typeof value === "string" ? value.trim() || fallback : value;
 }
 
 function formatAge(value) {
@@ -61,7 +61,7 @@ function normalizeWhatsappNumber(value) {
 }
 
 function resolveAnimalStatus(status) {
-  const normalizedStatus = String(status || "").toLowerCase();
+  const normalizedStatus = String(status || "").trim().toLowerCase();
 
   if (normalizedStatus === "terjual") {
     return {
@@ -80,7 +80,7 @@ function resolveAnimalStatus(status) {
   }
 
   return {
-    label: status || "-",
+    label: formatValue(status),
     className: "text-[#475156]",
     isSold: false,
   };
