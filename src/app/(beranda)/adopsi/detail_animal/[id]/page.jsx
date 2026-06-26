@@ -87,8 +87,6 @@ export default function DetailAnimal({ params }) {
   return (
     <>
       <HeroSectionBeranda showButton={false} />
-
-      {/* Content Section */}
       <Container bg="bg-white" className="py-16 px-25">
         <Column
           mainAxisAlignment="start"
@@ -96,7 +94,10 @@ export default function DetailAnimal({ params }) {
           className="min-h-96"
         >
           <Row className="w-full gap-8" mainAxisAlignment="center">
-            <AnimalImageSlider images={animalImages} animalName={animal?.nama} />
+            <AnimalImageSlider
+              images={animalImages}
+              animalName={animal?.nama}
+            />
             {isLoading ? (
               <Column crossAxisAlignment="center" className="w-full">
                 <Text className="text-gray-500">Memuat detail hewan...</Text>
